@@ -17,8 +17,8 @@ Danny wants to use the data to answer a few simple questions about his customers
 
 ## Entity Relationship Diagram
 
-(Case Study #1 - Danny's Diner/customer_1.png)
-
+[(Case Study #1 - Danny's Diner/customer_1.png)
+](https://github.com/baynazoglu/SQL-ALISTIRMALARI/blob/08ca455e314b92db37e4bddd19a3baff7422b8e8/Case%20Study%20%231%20-%20Danny's%20Diner/customer_1.png)
 ***
 
 ## Question and Solution
