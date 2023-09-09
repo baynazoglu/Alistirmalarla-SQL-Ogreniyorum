@@ -17,7 +17,7 @@ Danny wants to use the data to answer a few simple questions about his customers
 
 ## Entity Relationship Diagram
 
-![image](https://dbdiagram.io/d/64fc2fba02bd1c4a5e400d95)
+![image](https://ibb.co/PzKVqtZ)
 
 ***
 
