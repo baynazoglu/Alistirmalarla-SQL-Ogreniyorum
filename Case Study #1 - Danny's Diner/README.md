@@ -204,6 +204,16 @@ ORDER BY AGEGROUP
 | 948 | Yusuf Eymen TARI      | 22465899881 | E      | y_eymen@miuul.com       | 28.12.1946 | 34     | 707        | (542)8456299 | (542)1368216 | 65 Over   |
 |     |
 
+
+Solution 2-
+ --INNER JOINLE YAZMAK--
+````sql
+ SELECT * FROM CUSTOMERS C
+ INNER JOIN CITIES CT ON CT.ID =C.CITYID
+ INNER JOIN DISTRICTS D ON D.ID=C.DISTRICTID
+ WHERE CT.CITIES = 'İSTANBUL' AND D.DISTRICT != 'KADIKÖY'
+````
+
 ***
 
 **4. What is the most purchased item on the menu and how many times was it purchased by all customers?**
