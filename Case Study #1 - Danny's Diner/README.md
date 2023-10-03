@@ -80,52 +80,129 @@ GROUP BY customer_id;
 
 ***
 
-**3. What was the first item from the menu purchased by each customer?**
+**12.CUSTOMERS TABLOSUNDA MUSTERININ YASINA GORE HESAPLAYARAK TOPLAM MUSTERI SAYILARINI GETIRIN.**
+   NOT:AGEGROUP ALANI KULLANILMADAN SORGU GETIRILECEKTIR
 
+Solution 1-
 ````sql
-WITH ordered_sales AS (
-  SELECT 
-    sales.customer_id, 
-    sales.order_date, 
-    menu.product_name,
-    DENSE_RANK() OVER (
-      PARTITION BY sales.customer_id 
-      ORDER BY sales.order_date) AS rank
-  FROM dannys_diner.sales
-  INNER JOIN dannys_diner.menu
-    ON sales.product_id = menu.product_id
-)
+SELECT AGEGROUP,COUNT(*) AS CUSTOMERCOUNT FROM CUSTOMERS
+GROUP BY AGEGROUP 
+ORDER BY CUSTOMERCOUNT DESC
 
-SELECT 
-  customer_id, 
-  product_name
-FROM ordered_sales
-WHERE rank = 1
-GROUP BY customer_id, product_name;
 ````
 
-#### Steps:
-- Create a Common Table Expression (CTE) named `ordered_sales_cte`. Within the CTE, create a new column `rank` and calculate the row number using **DENSE_RANK()** window function. The **PARTITION BY** clause divides the data by `customer_id`, and the **ORDER BY** clause orders the rows within each partition by `order_date`.
-- In the outer query, select the appropriate columns and apply a filter in the **WHERE** clause to retrieve only the rows where the rank column equals 1, which represents the first row within each `customer_id` partition.
-- Use the GROUP BY clause to group the result by `customer_id` and `product_name`.
-
 #### Answer:
-| customer_id | product_name | 
-| ----------- | ----------- |
-| A           | curry        | 
-| A           | sushi        | 
-| B           | curry        | 
-| C           | ramen        |
+| AGEGROUP  | CUSTOMERCOUNT |
+| --------- | ------------- |
+| 65 Over   | 266           |
+| 20-35 Age | 207           |
+| 46-55 Age | 163           |
+| 56-65 Age | 161           |
+| 36-45 Age | 154           |
 
-- Customer A placed an order for both curry and sushi simultaneously, making them the first items in the order.
-- Customer B's first order is curry.
-- Customer C's first order is ramen.
 
-I have received feedback suggesting the use of `ROW_NUMBER()` instead of `DENSE_RANK()` for determining the "first order" in this question. 
+Solution 2-
 
-However, since the `order_date` does not have a timestamp, it is impossible to determine the exact sequence of items ordered by the customer. 
+````sql
+SELECT AGEGROUP2, COUNT(TMP.ID) AS CUSTOMERCOUNT FROM 
+(
+SELECT *,
+CASE
+	WHEN DATEDIFF(YEAR, BIRTHDATE, GETDATE()) BETWEEN 20 AND 35 THEN '20-35 YAS ARASI'
+	WHEN DATEDIFF(YEAR, BIRTHDATE, GETDATE()) BETWEEN 36 AND 45 THEN '36-45 YAS ARASI'
+	WHEN DATEDIFF(YEAR, BIRTHDATE, GETDATE()) BETWEEN 46 AND 55 THEN '46-55 YAS ARASI'
+	WHEN DATEDIFF(YEAR, BIRTHDATE, GETDATE()) BETWEEN 56 AND 65 THEN '56-65 YAS ARASI'
+	WHEN DATEDIFF(YEAR, BIRTHDATE, GETDATE()) >65 THEN '65 YAS USTU'
+END AGEGROUP2
+FROM CUSTOMERS
+) TMP
 
-Therefore, it would be inaccurate to conclude that curry is the customer's first order purely based on the alphabetical order of the product names. For this reason, I maintain my solution of using `DENSE_RANK()` and consider both curry and sushi as Customer A's first order.
+GROUP BY AGEGROUP2
+ORDER BY 1
+ 
+
+````
+
+Solution 3- 
+
+````sql
+SELECT 
+CASE
+	WHEN DATEDIFF(YEAR, BIRTHDATE, GETDATE()) BETWEEN 20 AND 35 THEN '20-35 YAS ARASI'
+	WHEN DATEDIFF(YEAR, BIRTHDATE, GETDATE()) BETWEEN 36 AND 45 THEN '36-45 YAS ARASI'
+	WHEN DATEDIFF(YEAR, BIRTHDATE, GETDATE()) BETWEEN 46 AND 55 THEN '46-55 YAS ARASI'
+	WHEN DATEDIFF(YEAR, BIRTHDATE, GETDATE()) BETWEEN 56 AND 65 THEN '56-65 YAS ARASI'
+	WHEN DATEDIFF(YEAR, BIRTHDATE, GETDATE()) >65 THEN '65 YAS USTU'
+END AGEGROUP,
+COUNT (*) CUSTOMERCOUNT
+FROM CUSTOMERS
+GROUP BY 
+ CASE
+	WHEN DATEDIFF(YEAR, BIRTHDATE, GETDATE()) BETWEEN 20 AND 35 THEN '20-35 YAS ARASI'
+	WHEN DATEDIFF(YEAR, BIRTHDATE, GETDATE()) BETWEEN 36 AND 45 THEN '36-45 YAS ARASI'
+	WHEN DATEDIFF(YEAR, BIRTHDATE, GETDATE()) BETWEEN 46 AND 55 THEN '46-55 YAS ARASI'
+	WHEN DATEDIFF(YEAR, BIRTHDATE, GETDATE()) BETWEEN 56 AND 65 THEN '56-65 YAS ARASI'
+	WHEN DATEDIFF(YEAR, BIRTHDATE, GETDATE()) >65 THEN '65 YAS USTU'
+ END
+ORDER BY AGEGROUP
+
+
+````
+ -- 
+ **13. ISTANBULDA YASAYIP ILCESI KADIKOY OLANLARI LISTELEYINIZ.**
+````sql
+
+ SELECT * FROM CUSTOMERS
+ WHERE CITYID IN(SELECT ID FROM CITIES WHERE CITIES IN ('İSTANBUL')) 
+ AND
+ DISTRICTID NOT IN (SELECT ID FROM DISTRICTS WHERE DISTRICT IN('KADIKÖY'))
+````
+| ID  | CUSTOMERNAME          | TCNUMBER    | GENDER | EMAIL                   | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP  |
+| --- | --------------------- | ----------- | ------ | ----------------------- | ---------- | ------ | ---------- | ------------ | ------------ | --------- |
+| 15  | Yasin AĞAGÜL          | 32764684197 | E      | y_agagvl@miuul.com      | 19.10.1979 | 34     | 897        | (532)6102663 | (537)3381012 | 36-45 Age |
+| 88  | Sebahat CİLALITAŞ     | 65960134490 | K      | s_cilalitas@miuul.com   | 30.09.1978 | 34     | 64         | (535)7019065 | (532)2408341 | 36-45 Age |
+| 97  | Deniz BENDER          | 31619199155 | E      | d_bender@miuul.com      | 4.04.1986  | 34     | 134        | (542)4181722 | (536)4621320 | 36-45 Age |
+| 101 | Çağla BEĞEN           | 85581395736 | K      | c_begen@miuul.com       | 22.12.1991 | 34     | 81         | (535)1338012 | (533)8331511 | 20-35 Age |
+| 127 | Nurettin GAYRETLİ     | 2822523822  | E      | n_gayretli@miuul.com    | 27.04.1950 | 34     | 84         | (532)7969080 | (536)7322740 | 65 Over   |
+| 139 | Yeliz KÜÇÜKALP        | 65432369284 | K      | y_kvcvkalp@miuul.com    | 26.02.1965 | 34     | 488        | (555)9613650 | (543)1071715 | 56-65 Age |
+| 164 | Eylül GÜLÜ            | 56388773535 | K      | e_gvlv@miuul.com        | 24.08.1969 | 34     | 3          | (537)5953916 | (532)4647711 | 46-55 Age |
+| 174 | Müzeyyen OCAKÇI       | 89589164667 | K      | m_ocakci@miuul.com      | 19.02.1972 | 34     | 707        | (543)1576124 | (505)9181537 | 46-55 Age |
+| 199 | Muhammed Emin TEKKAYA | 87271968026 | E      | m_emin@miuul.com        | 19.04.1984 | 34     | 897        | (542)2911632 | (535)9881318 | 36-45 Age |
+| 208 | Neslihan KILIÇÇEKER   | 53734331933 | K      | n_kilicceker@miuul.com  | 4.10.1982  | 34     | 707        | (543)1432619 | (505)2287257 | 36-45 Age |
+| 246 | Mevlüt ŞİMSEKER       | 2065043165  | E      | m_simseker@miuul.com    | 11.11.1949 | 34     | 83         | (536)7793481 | (536)9413739 | 65 Over   |
+| 247 | Nisanur AKKULAK       | 49012429023 | K      | n_akkulak@miuul.com     | 6.02.1979  | 34     | 895        | (555)6709018 | (543)9394443 | 36-45 Age |
+| 257 | Serdar ÇEMÇ           | 77873863780 | E      | s_cemc@miuul.com        | 29.07.1951 | 34     | 547        | (543)4297688 | (542)7539377 | 65 Over   |
+| 271 | Remziye ERAY          | 33991468715 | K      | r_eray@miuul.com        | 26.01.1967 | 34     | 719        | (542)4873263 | (553)2434933 | 56-65 Age |
+| 276 | Elife TINGIDIK        | 19933039590 | K      | e_tingidik@miuul.com    | 7.02.1965  | 34     | 707        | (543)4621558 | (532)5358366 | 56-65 Age |
+| 404 | Keziban OKSAK         | 87678193621 | K      | k_oksak@miuul.com       | 26.11.1977 | 34     | 707        | (541)6218657 | (543)7764885 | 46-55 Age |
+| 407 | Ayfer CELEBİ          | 80144211951 | K      | a_celebi@miuul.com      | 26.05.1986 | 34     | 543        | (505)8295235 | (535)2033277 | 36-45 Age |
+| 416 | Eren ŞUTANRIKULU      | 45125399189 | E      | e_sutanrikulu@miuul.com | 24.02.1990 | 34     | 899        | (534)2834758 | (534)6709214 | 20-35 Age |
+| 447 | Onur AKSARAY          | 32469125920 | E      | o_aksaray@miuul.com     | 18.10.1979 | 34     | 923        | (536)3901951 | (541)9788847 | 36-45 Age |
+| 448 | Yaren UMAK            | 41365938908 | K      | y_umak@miuul.com        | 10.09.1957 | 34     | 83         | (534)6301417 | (505)4596129 | 65 Over   |
+| 455 | Muammer TOPALOĞLU-    | 7168517181  | E      | m_topaloglu-@miuul.com  | 9.10.1950  | 34     | 707        | (505)9192816 | (543)5442959 | 65 Over   |
+| 496 | Ensar OLGAÇ           | 80924211220 | E      | e_olgac@miuul.com       | 18.07.1994 | 34     | 899        | (555)4552219 | (543)9245911 | 20-35 Age |
+| 529 | Bahar KAŞAYICI        | 47785654270 | K      | b_kasayici@miuul.com    | 25.08.1966 | 34     | 707        | (538)8739532 | (535)6751851 | 56-65 Age |
+| 557 | Rumeysa MARA          | 81583899079 | K      | r_mara@miuul.com        | 4.09.1997  | 34     | 707        | (543)6392684 | (533)7153585 | 20-35 Age |
+| 558 | Azra HASKARAMAN       | 40749281185 | K      | a_haskaraman@miuul.com  | 12.06.1986 | 34     | 707        | (535)5133788 | (533)9547231 | 36-45 Age |
+| 567 | Gülşen BEKDEMİR       | 50960125210 | K      | g_bekdemir@miuul.com    | 18.12.1947 | 34     | 134        | (555)6135826 | (536)3458818 | 65 Over   |
+| 579 | Erdal ÜRÜNLÜ          | 17550827248 | E      | e_vrvnlv@miuul.com      | 16.06.1966 | 34     | 543        | (553)1172521 | (554)8015495 | 56-65 Age |
+| 581 | Emircan ÖZTEL         | 4092345684  | E      | e_oztel@miuul.com       | 26.09.1995 | 34     | 707        | (542)6706551 | (541)7818778 | 20-35 Age |
+| 601 | Selahattin CANAYDIN   | 39322628588 | E      | s_canaydin@miuul.com    | 4.03.1981  | 34     | 899        | (537)1118352 | (505)7086339 | 36-45 Age |
+| 673 | Şevket ÖRGÜ           | 71464418638 | E      | s_orgv@miuul.com        | 27.12.1986 | 34     | 719        | (534)8395150 | (553)3567159 | 36-45 Age |
+| 681 | Güneş KOCABAŞ         | 16538320517 | K      | g_kocabas@miuul.com     | 8.11.1971  | 34     | 770        | (543)3033710 | (532)8037099 | 46-55 Age |
+| 691 | Gülay ÇAĞLIATALAY     | 75752454656 | K      | g_cagliatalay@miuul.com | 28.02.1988 | 34     | 719        | (535)6747315 | (542)6854839 | 20-35 Age |
+| 692 | Tülin AKTAŞDOĞAN      | 9491013281  | K      | t_aktasdogan@miuul.com  | 17.04.1962 | 34     | 84         | (543)6793282 | (553)1502919 | 56-65 Age |
+| 747 | Yıldız TÜRKARUH       | 76311226661 | K      | y_tvrkaruh@miuul.com    | 29.09.1950 | 34     | 543        | (543)8862283 | (505)4592277 | 65 Over   |
+| 764 | Ömer TÜRKAKIN         | 57777799390 | E      | o_tvrkakin@miuul.com    | 1.03.1956  | 34     | 899        | (543)3016555 | (532)9004991 | 65 Over   |
+| 792 | İlker ANAS            | 32938550941 | E      | i_anas@miuul.com        | 14.01.1964 | 34     | 84         | (535)4281438 | (537)2869792 | 56-65 Age |
+| 839 | Türkan MAH.25.SOK.    | 880191046   | K      | t_mah.25.sok.@miuul.com | 24.12.1993 | 34     | 897        | (533)6341392 | (534)3116953 | 20-35 Age |
+| 867 | Zerda BİNNEOĞLU       | 70035515877 | K      | z_binneoglu@miuul.com   | 4.06.1983  | 34     | 84         | (555)8526357 | (541)7811272 | 36-45 Age |
+| 881 | Cemil GÜRAL           | 63605048963 | E      | c_gvral@miuul.com       | 4.05.1991  | 34     | 899        | (538)2827421 | (553)4724975 | 20-35 Age |
+| 915 | Veysel USKUN          | 56622797451 | E      | v_uskun@miuul.com       | 29.01.1982 | 34     | 895        | (538)1237653 | (542)5509045 | 36-45 Age |
+| 919 | Seda ALVER            | 58284414875 | K      | s_alver@miuul.com       | 24.04.1955 | 34     | 84         | (543)4316161 | (538)1041145 | 65 Over   |
+| 930 | Nisanur KUZU          | 49402864286 | K      | n_kuzu@miuul.com        | 6.07.1983  | 34     | 707        | (538)9672464 | (555)4141153 | 36-45 Age |
+| 948 | Yusuf Eymen TARI      | 22465899881 | E      | y_eymen@miuul.com       | 28.12.1946 | 34     | 707        | (542)8456299 | (542)1368216 | 65 Over   |
+|     |
 
 ***
 
