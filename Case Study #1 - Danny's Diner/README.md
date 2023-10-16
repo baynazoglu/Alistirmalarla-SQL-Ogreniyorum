@@ -279,82 +279,682 @@ The GROUP BY statement is often used with aggregate functions (COUNT(), MAX(), M
 |                |
 
 ***
-**7. 1990 ile 1995 yılları arasında doğan müşterileri çekiniz. 90ve95 de dahildir.**
+**7. 10'dan fazla müşterimiz olan şehirleri müşteri sayısı ile birlikte müşteri sayısına göre fazladan aza doğru sıralı şekilde getiriniz.**
 
 Solution 1-
 ````sql
-SELECT TOP 10 * FROM CUSTOMERS
-WHERE BIRTHDATE BETWEEN '1990-01-01' AND '1995-12-31'
+SELECT CT.CITIES, COUNT(C.ID) AS COUNTCUSTOMER FROM CUSTOMERS C
+INNER JOIN CITIES CT ON C.CITYID=CT.ID
+GROUP BY CT.CITIES
+HAVING COUNT(C.ID)>10 
+ORDER BY COUNTCUSTOMER DESC
 ````
-#### Steps:
-The BETWEEN operator selects values within a given range. The values can be numbers, text, or dates.
-The BETWEEN operator is inclusive: begin and end values are included. 
-
 Solution 2-
 ````sql
-SELECT TOP 10 * FROM CUSTOMERS
-WHERE YEAR(BIRTHDATE) BETWEEN 1990 AND 1995
+SELECT CITIES, 
+(SELECT COUNT(CITYID)FROM CUSTOMERS C WHERE C.CITYID =CITIES.ID ) AS COUNTCUSTOMER
+FROM CITIES
+WHERE (SELECT COUNT(CITYID)FROM CUSTOMERS C WHERE C.CITYID =CITIES.ID )>10
+ORDER BY CUSTOMERCOUNT DESC
 ````
-#### Steps:
-The DATEPART() function returns a specified part of a date. This function returns the result as an integer value. SELECT DATEPART(month, '2017/08/25')
 
-The YEAR() function returns the year part for a specified date.
+#### Steps:
+The ORDER BY keyword is used to sort the result-set in ascending or descending order.
+
+The HAVING clause was added to SQL because the WHERE keyword cannot be used with aggregate functions
+ 
 
   
 #### Answer:
-| ID | CUSTOMERNAME      | TCNUMBER    | GENDER | EMAIL                   | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP  |
-| -- | ----------------- | ----------- | ------ | ----------------------- | ---------- | ------ | ---------- | ------------ | ------------ | --------- |
-| 6  | Ahmet İNCİKAPI    | 6722155596  | E      | a_incikapi@miuul.com    | 28.05.1991 | 53     | 225        | (532)2414618 | (538)8459085 | 20-35 Age |
-| 8  | Elif ÖZÇELİKBAŞ   | 84870496920 | K      | e_ozcelikbas@miuul.com  | 6.06.1993  | 73     | 815        | (536)9014627 | (544)3937372 | 20-35 Age |
-| 13 | Dilan DOKUYUCU    | 74659763913 | K      | d_dokuyucu@miuul.com    | 21.01.1993 | 25     | 333        | (538)8929868 | (534)4275461 | 20-35 Age |
-| 14 | Selim ÖZBAY       | 77720855989 | E      | s_ozbay@miuul.com       | 2.10.1992  | 73     | 815        | (535)5906635 | (533)4273519 | 20-35 Age |
-| 30 | Bülent KAÇAROĞLU  | 21971116249 | E      | b_kacaroglu@miuul.com   | 9.01.1995  | 42     | 311        | (554)6844639 | (541)5324664 | 20-35 Age |
-| 34 | Ela nur SEREK     | 53475314899 | K      | e_nur@miuul.com         | 11.01.1994 | 19     | 734        | (544)2251131 | (538)3066585 | 20-35 Age |
-| 57 | Leyla AYLANC      | 73737020787 | K      | l_aylanc@miuul.com      | 12.04.1992 | 60     | 431        | (555)6741797 | (554)7082859 | 20-35 Age |
-| 64 | Emrah KARAAT      | 43499469521 | E      | e_karaat@miuul.com      | 28.12.1990 | 20     | 724        | (544)6687598 | (505)8084086 | 20-35 Age |
-| 82 | Gamze ADAL        | 22231514956 | K      | g_adal@miuul.com        | 17.01.1991 | 20     | 2          | (536)3915594 | (535)4321850 | 20-35 Age |
-| 94 | Gönül ATILANEVLAT | 68119051500 | K      | g_atilanevlat@miuul.com | 20.01.1991 | 42     | 732        | (553)1707137 | (533)6289816 | 20-35 Age |
-|    |
+| CITIES         | COUNTCUSTOMER |
+| -------------- | ------------- |
+| ŞIRNAK         | 110           |
+| İSTANBUL       | 47            |
+| ANKARA         | 29            |
+| GAZİANTEP      | 25            |
+| İZMİR          | 24            |
+| KASTAMONU      | 23            |
+| BURSA          | 22            |
+| ÇORUM          | 22            |
+| DİYARBAKIR     | 20            |
+| BALIKESİR      | 20            |
+| AFYONKARAHİSAR | 19            |
+| ISPARTA        | 19            |
+| KONYA          | 19            |
+| SİVAS          | 17            |
+| ŞANLIURFA      | 17            |
+| KAYSERİ        | 17            |
+| MERSİN         | 17            |
+| ADANA          | 16            |
+| AYDIN          | 15            |
+| ERZURUM        | 14            |
+| DENİZLİ        | 14            |
+| MANİSA         | 14            |
+| SAMSUN         | 13            |
+| YOZGAT         | 13            |
+| ELAZIĞ         | 13            |
+| AĞRI           | 13            |
+| ANTALYA        | 13            |
+| ARTVİN         | 12            |
+| BİNGÖL         | 12            |
+| AKSARAY        | 12            |
+| TEKİRDAĞ       | 12            |
+| MUĞLA          | 12            |
+| OSMANİYE       | 12            |
+| RİZE           | 12            |
+| ADIYAMAN       | 11            |
+| BURDUR         | 11            |
+|                |
 
 ***
-**3. 1990 ile 1995 yılları arasında doğan müşterileri çekiniz. 90ve95 de dahildir.**
+**8. Hangi şehirde kaç erkek, kaç kadın müşterimiz olduğu bilgisini getiren sorguyu yazınız.**
+
 
 Solution 1-
 ````sql
-SELECT TOP 10 * FROM CUSTOMERS
-WHERE BIRTHDATE BETWEEN '1990-01-01' AND '1995-12-31'
+SELECT CT.CITIES,C.GENDER,COUNT(C.ID) AS CUSTOMERCOUNT FROM CUSTOMERS C
+INNER JOIN CITIES CT ON C.CITYID=CT.ID
+GROUP BY CT.CITIES, C.GENDER
+ORDER BY CITIES ASC
 ````
-#### Steps:
-The BETWEEN operator selects values within a given range. The values can be numbers, text, or dates.
-The BETWEEN operator is inclusive: begin and end values are included. 
-
-Solution 2-
-````sql
-SELECT TOP 10 * FROM CUSTOMERS
-WHERE YEAR(BIRTHDATE) BETWEEN 1990 AND 1995
-````
-#### Steps:
-The DATEPART() function returns a specified part of a date. This function returns the result as an integer value. SELECT DATEPART(month, '2017/08/25')
-
-The YEAR() function returns the year part for a specified date.
 
   
 #### Answer:
-| ID | CUSTOMERNAME      | TCNUMBER    | GENDER | EMAIL                   | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP  |
-| -- | ----------------- | ----------- | ------ | ----------------------- | ---------- | ------ | ---------- | ------------ | ------------ | --------- |
-| 6  | Ahmet İNCİKAPI    | 6722155596  | E      | a_incikapi@miuul.com    | 28.05.1991 | 53     | 225        | (532)2414618 | (538)8459085 | 20-35 Age |
-| 8  | Elif ÖZÇELİKBAŞ   | 84870496920 | K      | e_ozcelikbas@miuul.com  | 6.06.1993  | 73     | 815        | (536)9014627 | (544)3937372 | 20-35 Age |
-| 13 | Dilan DOKUYUCU    | 74659763913 | K      | d_dokuyucu@miuul.com    | 21.01.1993 | 25     | 333        | (538)8929868 | (534)4275461 | 20-35 Age |
-| 14 | Selim ÖZBAY       | 77720855989 | E      | s_ozbay@miuul.com       | 2.10.1992  | 73     | 815        | (535)5906635 | (533)4273519 | 20-35 Age |
-| 30 | Bülent KAÇAROĞLU  | 21971116249 | E      | b_kacaroglu@miuul.com   | 9.01.1995  | 42     | 311        | (554)6844639 | (541)5324664 | 20-35 Age |
-| 34 | Ela nur SEREK     | 53475314899 | K      | e_nur@miuul.com         | 11.01.1994 | 19     | 734        | (544)2251131 | (538)3066585 | 20-35 Age |
-| 57 | Leyla AYLANC      | 73737020787 | K      | l_aylanc@miuul.com      | 12.04.1992 | 60     | 431        | (555)6741797 | (554)7082859 | 20-35 Age |
-| 64 | Emrah KARAAT      | 43499469521 | E      | e_karaat@miuul.com      | 28.12.1990 | 20     | 724        | (544)6687598 | (505)8084086 | 20-35 Age |
-| 82 | Gamze ADAL        | 22231514956 | K      | g_adal@miuul.com        | 17.01.1991 | 20     | 2          | (536)3915594 | (535)4321850 | 20-35 Age |
-| 94 | Gönül ATILANEVLAT | 68119051500 | K      | g_atilanevlat@miuul.com | 20.01.1991 | 42     | 732        | (553)1707137 | (533)6289816 | 20-35 Age |
-|    |
+| CITIES         | GENDER | CUSTOMERCOUNT |
+| -------------- | ------ | ------------- |
+| ADANA          | E      | 10            |
+| ADANA          | K      | 6             |
+| ADIYAMAN       | E      | 7             |
+| ADIYAMAN       | K      | 4             |
+| AFYONKARAHİSAR | E      | 6             |
+| AFYONKARAHİSAR | K      | 13            |
+| AĞRI           | E      | 7             |
+| AĞRI           | K      | 6             |
+| AKSARAY        | E      | 7             |
+| AKSARAY        | K      | 5             |
+| AMASYA         | E      | 3             |
+| AMASYA         | K      | 2             |
+| ANKARA         | E      | 13            |
+| ANKARA         | K      | 16            |
+| ANTALYA        | E      | 8             |
+| ANTALYA        | K      | 5             |
+| ARDAHAN        | E      | 3             |
+| ARDAHAN        | K      | 5             |
+| ARTVİN         | E      | 5             |
+| ARTVİN         | K      | 7             |
+| AYDIN          | E      | 7             |
+| AYDIN          | K      | 8             |
+| BALIKESİR      | E      | 11            |
+| BALIKESİR      | K      | 9             |
+| BARTIN         | E      | 1             |
+| BARTIN         | K      | 1             |
+| BATMAN         | E      | 3             |
+| BATMAN         | K      | 3             |
+| BAYBURT        | K      | 1             |
+| BİLECİK        | E      | 2             |
+| BİLECİK        | K      | 5             |
+| BİNGÖL         | E      | 3             |
+| BİNGÖL         | K      | 9             |
+| BİTLİS         | E      | 2             |
+| BİTLİS         | K      | 5             |
+| BOLU           | E      | 4             |
+| BOLU           | K      | 5             |
+| BURDUR         | E      | 8             |
+| BURDUR         | K      | 3             |
+| BURSA          | E      | 6             |
+| BURSA          | K      | 16            |
+| ÇANAKKALE      | E      | 4             |
+| ÇANAKKALE      | K      | 5             |
+| ÇANKIRI        | E      | 5             |
+| ÇANKIRI        | K      | 4             |
+| ÇORUM          | E      | 11            |
+| ÇORUM          | K      | 11            |
+| DENİZLİ        | E      | 11            |
+| DENİZLİ        | K      | 3             |
+| DİYARBAKIR     | E      | 8             |
+| DİYARBAKIR     | K      | 12            |
+| DÜZCE          | E      | 1             |
+| DÜZCE          | K      | 1             |
+| EDİRNE         | E      | 1             |
+| EDİRNE         | K      | 6             |
+| ELAZIĞ         | E      | 3             |
+| ELAZIĞ         | K      | 10            |
+| ERZİNCAN       | E      | 2             |
+| ERZİNCAN       | K      | 5             |
+| ERZURUM        | E      | 5             |
+| ERZURUM        | K      | 9             |
+| ESKİŞEHİR      | E      | 3             |
+| GAZİANTEP      | E      | 14            |
+| GAZİANTEP      | K      | 11            |
+| GİRESUN        | E      | 4             |
+| GİRESUN        | K      | 6             |
+| HAKKARİ        | E      | 2             |
+| HAKKARİ        | K      | 1             |
+| HATAY          | E      | 4             |
+| HATAY          | K      | 3             |
+| IĞDIR          | E      | 1             |
+| ISPARTA        | E      | 8             |
+| ISPARTA        | K      | 11            |
+| İSTANBUL       | E      | 21            |
+| İSTANBUL       | K      | 26            |
+| İZMİR          | E      | 10            |
+| İZMİR          | K      | 14            |
+| KAHRAMANMARAŞ  | E      | 4             |
+| KAHRAMANMARAŞ  | K      | 4             |
+| KARABÜK        | K      | 7             |
+| KARAMAN        | K      | 1             |
+| KARS           | K      | 2             |
+| KASTAMONU      | E      | 10            |
+| KASTAMONU      | K      | 13            |
+| KAYSERİ        | E      | 8             |
+| KAYSERİ        | K      | 9             |
+| KIRIKKALE      | K      | 1             |
+| KIRKLARELİ     | E      | 2             |
+| KIRŞEHİR       | E      | 2             |
+| KIRŞEHİR       | K      | 4             |
+| KİLİS          | E      | 7             |
+| KOCAELİ        | E      | 2             |
+| KOCAELİ        | K      | 4             |
+| KONYA          | E      | 12            |
+| KONYA          | K      | 7             |
+| KÜTAHYA        | E      | 2             |
+| KÜTAHYA        | K      | 1             |
+| MALATYA        | E      | 1             |
+| MALATYA        | K      | 2             |
+| MANİSA         | E      | 11            |
+| MANİSA         | K      | 3             |
+| MARDİN         | E      | 3             |
+| MARDİN         | K      | 7             |
+| MERSİN         | E      | 5             |
+| MERSİN         | K      | 12            |
+| MUĞLA          | E      | 7             |
+| MUĞLA          | K      | 5             |
+| MUŞ            | E      | 5             |
+| MUŞ            | K      | 2             |
+| NEVŞEHİR       | E      | 3             |
+| NEVŞEHİR       | K      | 2             |
+| NİĞDE          | E      | 2             |
+| NİĞDE          | K      | 3             |
+| ORDU           | E      | 6             |
+| ORDU           | K      | 3             |
+| OSMANİYE       | E      | 5             |
+| OSMANİYE       | K      | 7             |
+| RİZE           | E      | 5             |
+| RİZE           | K      | 7             |
+| SAKARYA        | E      | 1             |
+| SAKARYA        | K      | 4             |
+| SAMSUN         | E      | 9             |
+| SAMSUN         | K      | 4             |
+| SİİRT          | E      | 3             |
+| SİİRT          | K      | 1             |
+| SİNOP          | E      | 3             |
+| SİNOP          | K      | 2             |
+| SİVAS          | E      | 10            |
+| SİVAS          | K      | 7             |
+| ŞANLIURFA      | E      | 12            |
+| ŞANLIURFA      | K      | 5             |
+| ŞIRNAK         | E      | 47            |
+| ŞIRNAK         | K      | 63            |
+| TEKİRDAĞ       | E      | 4             |
+| TEKİRDAĞ       | K      | 8             |
+| TOKAT          | E      | 4             |
+| TOKAT          | K      | 4             |
+| TRABZON        | E      | 4             |
+| TRABZON        | K      | 4             |
+| TUNCELİ        | E      | 1             |
+| TUNCELİ        | K      | 3             |
+| UŞAK           | E      | 2             |
+| UŞAK           | K      | 3             |
+| VAN            | K      | 2             |
+| YALOVA         | E      | 5             |
+| YALOVA         | K      | 1             |
+| YOZGAT         | E      | 5             |
+| YOZGAT         | K      | 8             |
+| ZONGULDAK      | E      | 5             |
+| ZONGULDAK      | K      | 3             |
+|                |
 
 ***
+
+**9. Hangi şehirde kaç erkek, kaç kadın müşterimizin olduğu bilgisini "erkeksayısı" ve "kadınsayısı" columnları yaratarak getiren sorguyu yazınız.**
+
+
+Solution 1-
+````sql
+SELECT CITIES, 
+(SELECT COUNT(*)FROM CUSTOMERS  WHERE CITYID=CT.ID AND GENDER ='E') AS ERKEKSAYISI,
+(SELECT COUNT(*)FROM CUSTOMERS  WHERE CITYID=CT.ID AND GENDER ='K') AS KADINSAYISI
+FROM CITIES CT
+````
+  
+#### Answer:
+| CITIES         | ERKEKSAYISI | KADINSAYISI |
+| -------------- | ----------- | ----------- |
+| ADANA          | 10          | 6           |
+| ADIYAMAN       | 7           | 4           |
+| AFYONKARAHİSAR | 6           | 13          |
+| AĞRI           | 7           | 6           |
+| AMASYA         | 3           | 2           |
+| ANKARA         | 13          | 16          |
+| ANTALYA        | 8           | 5           |
+| ARTVİN         | 5           | 7           |
+| AYDIN          | 7           | 8           |
+| BALIKESİR      | 11          | 9           |
+| BİLECİK        | 2           | 5           |
+| BİNGÖL         | 3           | 9           |
+| BİTLİS         | 2           | 5           |
+| BOLU           | 4           | 5           |
+| BURDUR         | 8           | 3           |
+| BURSA          | 6           | 16          |
+| ÇANAKKALE      | 4           | 5           |
+| ÇANKIRI        | 5           | 4           |
+| ÇORUM          | 11          | 11          |
+| DENİZLİ        | 11          | 3           |
+| DİYARBAKIR     | 8           | 12          |
+| EDİRNE         | 1           | 6           |
+| ELAZIĞ         | 3           | 10          |
+| ERZİNCAN       | 2           | 5           |
+| ERZURUM        | 5           | 9           |
+| ESKİŞEHİR      | 3           | 0           |
+| GAZİANTEP      | 14          | 11          |
+| GİRESUN        | 4           | 6           |
+| GÜMÜŞHANE      | 0           | 0           |
+| HAKKARİ        | 2           | 1           |
+| HATAY          | 4           | 3           |
+| ISPARTA        | 8           | 11          |
+| MERSİN         | 5           | 12          |
+| İSTANBUL       | 21          | 26          |
+| İZMİR          | 10          | 14          |
+| KARS           | 0           | 2           |
+| KASTAMONU      | 10          | 13          |
+| KAYSERİ        | 8           | 9           |
+| KIRKLARELİ     | 2           | 0           |
+| KIRŞEHİR       | 2           | 4           |
+| KOCAELİ        | 2           | 4           |
+| KONYA          | 12          | 7           |
+| KÜTAHYA        | 2           | 1           |
+| MALATYA        | 1           | 2           |
+| MANİSA         | 11          | 3           |
+| KAHRAMANMARAŞ  | 4           | 4           |
+| MARDİN         | 3           | 7           |
+| MUĞLA          | 7           | 5           |
+| MUŞ            | 5           | 2           |
+| NEVŞEHİR       | 3           | 2           |
+| NİĞDE          | 2           | 3           |
+| ORDU           | 6           | 3           |
+| RİZE           | 5           | 7           |
+| SAKARYA        | 1           | 4           |
+| SAMSUN         | 9           | 4           |
+| SİİRT          | 3           | 1           |
+| SİNOP          | 3           | 2           |
+| SİVAS          | 10          | 7           |
+| TEKİRDAĞ       | 4           | 8           |
+| TOKAT          | 4           | 4           |
+| TRABZON        | 4           | 4           |
+| TUNCELİ        | 1           | 3           |
+| ŞANLIURFA      | 12          | 5           |
+| UŞAK           | 2           | 3           |
+| VAN            | 0           | 2           |
+| YOZGAT         | 5           | 8           |
+| ZONGULDAK      | 5           | 3           |
+| AKSARAY        | 7           | 5           |
+| BAYBURT        | 0           | 1           |
+| KARAMAN        | 0           | 1           |
+| KIRIKKALE      | 0           | 1           |
+| BATMAN         | 3           | 3           |
+| ŞIRNAK         | 47          | 63          |
+| BARTIN         | 1           | 1           |
+| ARDAHAN        | 3           | 5           |
+| IĞDIR          | 1           | 0           |
+| YALOVA         | 5           | 1           |
+| KARABÜK        | 0           | 7           |
+| KİLİS          | 7           | 0           |
+| OSMANİYE       | 5           | 7           |
+| DÜZCE          | 1           | 1           |
+|                |
+
+***
+
+
+**10.Customers tablosuna yaş grubu için yeni bir alan ekleyiniz.(Adı AGEGROUP veri tipi VARCHAR(50)).**
+
+
+Solution 1-
+````sql
+SELECT CT.CITIES,C.GENDER,COUNT(C.ID) AS CUSTOMERCOUNT FROM CUSTOMERS C
+INNER JOIN CITIES CT ON C.CITYID=CT.ID
+GROUP BY CT.CITIES, C.GENDER
+ORDER BY CITIES ASC
+````
+
+  
+#### Answer:
+| CITIES         | GENDER | CUSTOMERCOUNT |
+| -------------- | ------ | ------------- |
+| ADANA          | E      | 10            |
+| ADANA          | K      | 6             |
+| ADIYAMAN       | E      | 7             |
+| ADIYAMAN       | K      | 4             |
+| AFYONKARAHİSAR | E      | 6             |
+| AFYONKARAHİSAR | K      | 13            |
+| AĞRI           | E      | 7             |
+| AĞRI           | K      | 6             |
+| AKSARAY        | E      | 7             |
+| AKSARAY        | K      | 5             |
+| AMASYA         | E      | 3             |
+| AMASYA         | K      | 2             |
+| ANKARA         | E      | 13            |
+| ANKARA         | K      | 16            |
+| ANTALYA        | E      | 8             |
+| ANTALYA        | K      | 5             |
+| ARDAHAN        | E      | 3             |
+| ARDAHAN        | K      | 5             |
+| ARTVİN         | E      | 5             |
+| ARTVİN         | K      | 7             |
+| AYDIN          | E      | 7             |
+| AYDIN          | K      | 8             |
+| BALIKESİR      | E      | 11            |
+| BALIKESİR      | K      | 9             |
+| BARTIN         | E      | 1             |
+| BARTIN         | K      | 1             |
+| BATMAN         | E      | 3             |
+| BATMAN         | K      | 3             |
+| BAYBURT        | K      | 1             |
+| BİLECİK        | E      | 2             |
+| BİLECİK        | K      | 5             |
+| BİNGÖL         | E      | 3             |
+| BİNGÖL         | K      | 9             |
+| BİTLİS         | E      | 2             |
+| BİTLİS         | K      | 5             |
+| BOLU           | E      | 4             |
+| BOLU           | K      | 5             |
+| BURDUR         | E      | 8             |
+| BURDUR         | K      | 3             |
+| BURSA          | E      | 6             |
+| BURSA          | K      | 16            |
+| ÇANAKKALE      | E      | 4             |
+| ÇANAKKALE      | K      | 5             |
+| ÇANKIRI        | E      | 5             |
+| ÇANKIRI        | K      | 4             |
+| ÇORUM          | E      | 11            |
+| ÇORUM          | K      | 11            |
+| DENİZLİ        | E      | 11            |
+| DENİZLİ        | K      | 3             |
+| DİYARBAKIR     | E      | 8             |
+| DİYARBAKIR     | K      | 12            |
+| DÜZCE          | E      | 1             |
+| DÜZCE          | K      | 1             |
+| EDİRNE         | E      | 1             |
+| EDİRNE         | K      | 6             |
+| ELAZIĞ         | E      | 3             |
+| ELAZIĞ         | K      | 10            |
+| ERZİNCAN       | E      | 2             |
+| ERZİNCAN       | K      | 5             |
+| ERZURUM        | E      | 5             |
+| ERZURUM        | K      | 9             |
+| ESKİŞEHİR      | E      | 3             |
+| GAZİANTEP      | E      | 14            |
+| GAZİANTEP      | K      | 11            |
+| GİRESUN        | E      | 4             |
+| GİRESUN        | K      | 6             |
+| HAKKARİ        | E      | 2             |
+| HAKKARİ        | K      | 1             |
+| HATAY          | E      | 4             |
+| HATAY          | K      | 3             |
+| IĞDIR          | E      | 1             |
+| ISPARTA        | E      | 8             |
+| ISPARTA        | K      | 11            |
+| İSTANBUL       | E      | 21            |
+| İSTANBUL       | K      | 26            |
+| İZMİR          | E      | 10            |
+| İZMİR          | K      | 14            |
+| KAHRAMANMARAŞ  | E      | 4             |
+| KAHRAMANMARAŞ  | K      | 4             |
+| KARABÜK        | K      | 7             |
+| KARAMAN        | K      | 1             |
+| KARS           | K      | 2             |
+| KASTAMONU      | E      | 10            |
+| KASTAMONU      | K      | 13            |
+| KAYSERİ        | E      | 8             |
+| KAYSERİ        | K      | 9             |
+| KIRIKKALE      | K      | 1             |
+| KIRKLARELİ     | E      | 2             |
+| KIRŞEHİR       | E      | 2             |
+| KIRŞEHİR       | K      | 4             |
+| KİLİS          | E      | 7             |
+| KOCAELİ        | E      | 2             |
+| KOCAELİ        | K      | 4             |
+| KONYA          | E      | 12            |
+| KONYA          | K      | 7             |
+| KÜTAHYA        | E      | 2             |
+| KÜTAHYA        | K      | 1             |
+| MALATYA        | E      | 1             |
+| MALATYA        | K      | 2             |
+| MANİSA         | E      | 11            |
+| MANİSA         | K      | 3             |
+| MARDİN         | E      | 3             |
+| MARDİN         | K      | 7             |
+| MERSİN         | E      | 5             |
+| MERSİN         | K      | 12            |
+| MUĞLA          | E      | 7             |
+| MUĞLA          | K      | 5             |
+| MUŞ            | E      | 5             |
+| MUŞ            | K      | 2             |
+| NEVŞEHİR       | E      | 3             |
+| NEVŞEHİR       | K      | 2             |
+| NİĞDE          | E      | 2             |
+| NİĞDE          | K      | 3             |
+| ORDU           | E      | 6             |
+| ORDU           | K      | 3             |
+| OSMANİYE       | E      | 5             |
+| OSMANİYE       | K      | 7             |
+| RİZE           | E      | 5             |
+| RİZE           | K      | 7             |
+| SAKARYA        | E      | 1             |
+| SAKARYA        | K      | 4             |
+| SAMSUN         | E      | 9             |
+| SAMSUN         | K      | 4             |
+| SİİRT          | E      | 3             |
+| SİİRT          | K      | 1             |
+| SİNOP          | E      | 3             |
+| SİNOP          | K      | 2             |
+| SİVAS          | E      | 10            |
+| SİVAS          | K      | 7             |
+| ŞANLIURFA      | E      | 12            |
+| ŞANLIURFA      | K      | 5             |
+| ŞIRNAK         | E      | 47            |
+| ŞIRNAK         | K      | 63            |
+| TEKİRDAĞ       | E      | 4             |
+| TEKİRDAĞ       | K      | 8             |
+| TOKAT          | E      | 4             |
+| TOKAT          | K      | 4             |
+| TRABZON        | E      | 4             |
+| TRABZON        | K      | 4             |
+| TUNCELİ        | E      | 1             |
+| TUNCELİ        | K      | 3             |
+| UŞAK           | E      | 2             |
+| UŞAK           | K      | 3             |
+| VAN            | K      | 2             |
+| YALOVA         | E      | 5             |
+| YALOVA         | K      | 1             |
+| YOZGAT         | E      | 5             |
+| YOZGAT         | K      | 8             |
+| ZONGULDAK      | E      | 5             |
+| ZONGULDAK      | K      | 3             |
+|                |
+
+***
+
+
+**8. Hangi şehirde kaç erkek, kaç kadın müşterimiz olduğu bilgisini getiren sorguyu yazınız.**
+
+
+Solution 1-
+````sql
+SELECT CT.CITIES,C.GENDER,COUNT(C.ID) AS CUSTOMERCOUNT FROM CUSTOMERS C
+INNER JOIN CITIES CT ON C.CITYID=CT.ID
+GROUP BY CT.CITIES, C.GENDER
+ORDER BY CITIES ASC
+````
+
+  
+#### Answer:
+| CITIES         | GENDER | CUSTOMERCOUNT |
+| -------------- | ------ | ------------- |
+| ADANA          | E      | 10            |
+| ADANA          | K      | 6             |
+| ADIYAMAN       | E      | 7             |
+| ADIYAMAN       | K      | 4             |
+| AFYONKARAHİSAR | E      | 6             |
+| AFYONKARAHİSAR | K      | 13            |
+| AĞRI           | E      | 7             |
+| AĞRI           | K      | 6             |
+| AKSARAY        | E      | 7             |
+| AKSARAY        | K      | 5             |
+| AMASYA         | E      | 3             |
+| AMASYA         | K      | 2             |
+| ANKARA         | E      | 13            |
+| ANKARA         | K      | 16            |
+| ANTALYA        | E      | 8             |
+| ANTALYA        | K      | 5             |
+| ARDAHAN        | E      | 3             |
+| ARDAHAN        | K      | 5             |
+| ARTVİN         | E      | 5             |
+| ARTVİN         | K      | 7             |
+| AYDIN          | E      | 7             |
+| AYDIN          | K      | 8             |
+| BALIKESİR      | E      | 11            |
+| BALIKESİR      | K      | 9             |
+| BARTIN         | E      | 1             |
+| BARTIN         | K      | 1             |
+| BATMAN         | E      | 3             |
+| BATMAN         | K      | 3             |
+| BAYBURT        | K      | 1             |
+| BİLECİK        | E      | 2             |
+| BİLECİK        | K      | 5             |
+| BİNGÖL         | E      | 3             |
+| BİNGÖL         | K      | 9             |
+| BİTLİS         | E      | 2             |
+| BİTLİS         | K      | 5             |
+| BOLU           | E      | 4             |
+| BOLU           | K      | 5             |
+| BURDUR         | E      | 8             |
+| BURDUR         | K      | 3             |
+| BURSA          | E      | 6             |
+| BURSA          | K      | 16            |
+| ÇANAKKALE      | E      | 4             |
+| ÇANAKKALE      | K      | 5             |
+| ÇANKIRI        | E      | 5             |
+| ÇANKIRI        | K      | 4             |
+| ÇORUM          | E      | 11            |
+| ÇORUM          | K      | 11            |
+| DENİZLİ        | E      | 11            |
+| DENİZLİ        | K      | 3             |
+| DİYARBAKIR     | E      | 8             |
+| DİYARBAKIR     | K      | 12            |
+| DÜZCE          | E      | 1             |
+| DÜZCE          | K      | 1             |
+| EDİRNE         | E      | 1             |
+| EDİRNE         | K      | 6             |
+| ELAZIĞ         | E      | 3             |
+| ELAZIĞ         | K      | 10            |
+| ERZİNCAN       | E      | 2             |
+| ERZİNCAN       | K      | 5             |
+| ERZURUM        | E      | 5             |
+| ERZURUM        | K      | 9             |
+| ESKİŞEHİR      | E      | 3             |
+| GAZİANTEP      | E      | 14            |
+| GAZİANTEP      | K      | 11            |
+| GİRESUN        | E      | 4             |
+| GİRESUN        | K      | 6             |
+| HAKKARİ        | E      | 2             |
+| HAKKARİ        | K      | 1             |
+| HATAY          | E      | 4             |
+| HATAY          | K      | 3             |
+| IĞDIR          | E      | 1             |
+| ISPARTA        | E      | 8             |
+| ISPARTA        | K      | 11            |
+| İSTANBUL       | E      | 21            |
+| İSTANBUL       | K      | 26            |
+| İZMİR          | E      | 10            |
+| İZMİR          | K      | 14            |
+| KAHRAMANMARAŞ  | E      | 4             |
+| KAHRAMANMARAŞ  | K      | 4             |
+| KARABÜK        | K      | 7             |
+| KARAMAN        | K      | 1             |
+| KARS           | K      | 2             |
+| KASTAMONU      | E      | 10            |
+| KASTAMONU      | K      | 13            |
+| KAYSERİ        | E      | 8             |
+| KAYSERİ        | K      | 9             |
+| KIRIKKALE      | K      | 1             |
+| KIRKLARELİ     | E      | 2             |
+| KIRŞEHİR       | E      | 2             |
+| KIRŞEHİR       | K      | 4             |
+| KİLİS          | E      | 7             |
+| KOCAELİ        | E      | 2             |
+| KOCAELİ        | K      | 4             |
+| KONYA          | E      | 12            |
+| KONYA          | K      | 7             |
+| KÜTAHYA        | E      | 2             |
+| KÜTAHYA        | K      | 1             |
+| MALATYA        | E      | 1             |
+| MALATYA        | K      | 2             |
+| MANİSA         | E      | 11            |
+| MANİSA         | K      | 3             |
+| MARDİN         | E      | 3             |
+| MARDİN         | K      | 7             |
+| MERSİN         | E      | 5             |
+| MERSİN         | K      | 12            |
+| MUĞLA          | E      | 7             |
+| MUĞLA          | K      | 5             |
+| MUŞ            | E      | 5             |
+| MUŞ            | K      | 2             |
+| NEVŞEHİR       | E      | 3             |
+| NEVŞEHİR       | K      | 2             |
+| NİĞDE          | E      | 2             |
+| NİĞDE          | K      | 3             |
+| ORDU           | E      | 6             |
+| ORDU           | K      | 3             |
+| OSMANİYE       | E      | 5             |
+| OSMANİYE       | K      | 7             |
+| RİZE           | E      | 5             |
+| RİZE           | K      | 7             |
+| SAKARYA        | E      | 1             |
+| SAKARYA        | K      | 4             |
+| SAMSUN         | E      | 9             |
+| SAMSUN         | K      | 4             |
+| SİİRT          | E      | 3             |
+| SİİRT          | K      | 1             |
+| SİNOP          | E      | 3             |
+| SİNOP          | K      | 2             |
+| SİVAS          | E      | 10            |
+| SİVAS          | K      | 7             |
+| ŞANLIURFA      | E      | 12            |
+| ŞANLIURFA      | K      | 5             |
+| ŞIRNAK         | E      | 47            |
+| ŞIRNAK         | K      | 63            |
+| TEKİRDAĞ       | E      | 4             |
+| TEKİRDAĞ       | K      | 8             |
+| TOKAT          | E      | 4             |
+| TOKAT          | K      | 4             |
+| TRABZON        | E      | 4             |
+| TRABZON        | K      | 4             |
+| TUNCELİ        | E      | 1             |
+| TUNCELİ        | K      | 3             |
+| UŞAK           | E      | 2             |
+| UŞAK           | K      | 3             |
+| VAN            | K      | 2             |
+| YALOVA         | E      | 5             |
+| YALOVA         | K      | 1             |
+| YOZGAT         | E      | 5             |
+| YOZGAT         | K      | 8             |
+| ZONGULDAK      | E      | 5             |
+| ZONGULDAK      | K      | 3             |
+|                |
+
+***
+
 
 
 
