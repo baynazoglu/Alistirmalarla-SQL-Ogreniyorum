@@ -181,6 +181,13 @@ SELECT CT.CITIES,COUNT(C.ID) AS CUSTOMERCOUNT FROM CUSTOMERS C
 INNER JOIN CITIES CT ON C.CITYID=CT.ID
 GROUP BY CT.CITIES
 ````
+Solution 2-
+````sql
+SELECT *,
+(SELECT COUNT(*) FROM CUSTOMERS C WHERE CITYID=CITIES.ID) AS CUSTOMERCOUNTS 
+FROM CITIES
+````
+
 #### Steps:
 The GROUP BY statement groups rows that have the same values into summary rows, like "find the number of customers in each country".
 
