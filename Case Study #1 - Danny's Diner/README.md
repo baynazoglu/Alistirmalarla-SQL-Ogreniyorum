@@ -1,5 +1,5 @@
-# 🍜 Case Study #1: Müşteri Veritabanı
-<img src="https://user-images.githubusercontent.com/81607668/127727503-9d9e7a25-93cb-4f95-8bd0-20b87cb4b459.png" alt="Image" width="500" height="520">
+# 💸 Case Study #1: Müşteri Veritabanı
+<img src="https://www.xero.com/blog/wp-content/uploads/2020/07/164402-Xero-blog-header-01_800x480_acf_cropped.png" alt="Image" width="400" height="400">
 
 ## 📚 Table of Contents
 - [Business Task](#business-task)
@@ -11,13 +11,13 @@ Please note that all the information regarding the case study has been sourced f
 ***
 
 ## Business Task
-Danny wants to use the data to answer a few simple questions about his customers, especially about their visiting patterns, how much money they’ve spent and also which menu items are their favourite. 
 
+Bu senaryoda Customer verisetimize göre soruları cevaplıyor olacağız.
 ***
 
 ## Entity Relationship Diagram
 
-<img src="https://github.com/baynazoglu/SQL-ALISTIRMALARI/blob/08ca455e314b92db37e4bddd19a3baff7422b8e8/Case%20Study%20%231%20-%20Danny's%20Diner/customer_1.png" alt="Image" width="400" height="650" >
+<img src="https://github.com/baynazoglu/SQL-ALISTIRMALARI/blob/08ca455e314b92db37e4bddd19a3baff7422b8e8/Case%20Study%20%231%20-%20Danny's%20Diner/customer_1.png" alt="Image" width="500" height="400" >
 
 ## Question and Solution
 
@@ -53,32 +53,304 @@ WHERE CUSTOMERNAME LIKE 'A%'
 
 ***
 
-**2. How many days has each customer visited the restaurant?**
+**2. Customers tablosunda adı "N" harfi ile biten ve cinsiyeti erkek olan 10 kişiyi sıralayınız.**
 
 ````sql
-SELECT 
-  customer_id, 
-  COUNT(DISTINCT order_date) AS visit_count
-FROM dannys_diner.sales
-GROUP BY customer_id;
+SELECT TOP 10 * FROM CUSTOMERS
+WHERE CUSTOMERNAME LIKE '%N' AND GENDER = 'E'
 ````
 
 #### Steps:
-- To determine the unique number of visits for each customer, utilize **COUNT(DISTINCT `order_date`)**.
-- It's important to apply the **DISTINCT** keyword while calculating the visit count to avoid duplicate counting of days. For instance, if Customer A visited the restaurant twice on '2021–01–07', counting without **DISTINCT** would result in 2 days instead of the accurate count of 1 day.
+- The AND operator is used to filter records based on more than one condition, like if you want to return all customers from Spain that starts with the letter 'G':
 
 #### Answer:
-| customer_id | visit_count |
-| ----------- | ----------- |
-| A           | 4          |
-| B           | 6          |
-| C           | 2          |
-
-- Customer A visited 4 times.
-- Customer B visited 6 times.
-- Customer C visited 2 times.
+| ID  | CUSTOMERNAME          | TCNUMBER    | GENDER | EMAIL                   | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP  |
+| --- | --------------------- | ----------- | ------ | ----------------------- | ---------- | ------ | ---------- | ------------ | ------------ | --------- |
+| 58  | Umut SAFALTIN         | 51937342075 | E      | u_safaltin@miuul.com    | 16.08.1952 | 37     | 720        | (542)2692488 | (533)6412455 | 65 Over   |
+| 73  | Sebahattin SUKUSTURAN | 32933375870 | E      | s_sukusturan@miuul.com  | 9.01.1951  | 1      | 4          | (535)4032232 | (534)4738142 | 65 Over   |
+| 75  | Suat GİRİGN           | 43573980158 | E      | s_girign@miuul.com      | 17.12.1976 | 67     | 173        | (555)3754614 | (543)2335559 | 46-55 Age |
+| 78  | Efe BİRSAN            | 39503368325 | E      | e_birsan@miuul.com      | 4.05.1960  | 42     | 752        | (541)3999883 | (537)2063996 | 56-65 Age |
+| 104 | Necati DOĞUKAN        | 28235335234 | E      | n_dogukan@miuul.com     | 10.01.1984 | 27     | 728        | (536)7777583 | (541)8505041 | 36-45 Age |
+| 114 | Polat ŞENGEZKEN       | 48347440281 | E      | p_sengezken@miuul.com   | 27.12.1949 | 32     | 601        | (544)5388154 | (555)3781465 | 65 Over   |
+| 117 | Metehan GÖÇEMEN       | 86191747794 | E      | m_gocemen@miuul.com     | 6.12.1990  | 18     | 129        | (505)6368191 | (532)4167785 | 20-35 Age |
+| 136 | Oğuzhan KÖKAN         | 33377086930 | E      | o_kokan@miuul.com       | 9.07.1941  | 19     | 734        | (505)6358327 | (541)2616615 | 65 Over   |
+| 152 | Fırat KILICARSLAN     | 41288781936 | E      | f_kilicarslan@miuul.com | 26.08.1989 | 73     | 815        | (537)5509258 | (533)6106975 | 20-35 Age |
+| 185 | Ersin SEKMEN          | 44465589374 | E      | e_sekmen@miuul.com      | 19.10.1975 | 23     | 343        | (532)7922697 | (544)5402036 | 46-55 Age |
+|     |
 
 ***
+**3. 1990 ile 1995 yılları arasında doğan müşterileri çekiniz. 90ve95 de dahildir.**
+
+Solution 1-
+````sql
+SELECT TOP 10 * FROM CUSTOMERS
+WHERE BIRTHDATE BETWEEN '1990-01-01' AND '1995-12-31'
+````
+#### Steps:
+The BETWEEN operator selects values within a given range. The values can be numbers, text, or dates.
+The BETWEEN operator is inclusive: begin and end values are included. 
+
+Solution 2-
+````sql
+SELECT TOP 10 * FROM CUSTOMERS
+WHERE YEAR(BIRTHDATE) BETWEEN 1990 AND 1995
+````
+#### Steps:
+The DATEPART() function returns a specified part of a date. This function returns the result as an integer value. SELECT DATEPART(month, '2017/08/25')
+
+The YEAR() function returns the year part for a specified date.
+
+  
+#### Answer:
+| ID | CUSTOMERNAME      | TCNUMBER    | GENDER | EMAIL                   | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP  |
+| -- | ----------------- | ----------- | ------ | ----------------------- | ---------- | ------ | ---------- | ------------ | ------------ | --------- |
+| 6  | Ahmet İNCİKAPI    | 6722155596  | E      | a_incikapi@miuul.com    | 28.05.1991 | 53     | 225        | (532)2414618 | (538)8459085 | 20-35 Age |
+| 8  | Elif ÖZÇELİKBAŞ   | 84870496920 | K      | e_ozcelikbas@miuul.com  | 6.06.1993  | 73     | 815        | (536)9014627 | (544)3937372 | 20-35 Age |
+| 13 | Dilan DOKUYUCU    | 74659763913 | K      | d_dokuyucu@miuul.com    | 21.01.1993 | 25     | 333        | (538)8929868 | (534)4275461 | 20-35 Age |
+| 14 | Selim ÖZBAY       | 77720855989 | E      | s_ozbay@miuul.com       | 2.10.1992  | 73     | 815        | (535)5906635 | (533)4273519 | 20-35 Age |
+| 30 | Bülent KAÇAROĞLU  | 21971116249 | E      | b_kacaroglu@miuul.com   | 9.01.1995  | 42     | 311        | (554)6844639 | (541)5324664 | 20-35 Age |
+| 34 | Ela nur SEREK     | 53475314899 | K      | e_nur@miuul.com         | 11.01.1994 | 19     | 734        | (544)2251131 | (538)3066585 | 20-35 Age |
+| 57 | Leyla AYLANC      | 73737020787 | K      | l_aylanc@miuul.com      | 12.04.1992 | 60     | 431        | (555)6741797 | (554)7082859 | 20-35 Age |
+| 64 | Emrah KARAAT      | 43499469521 | E      | e_karaat@miuul.com      | 28.12.1990 | 20     | 724        | (544)6687598 | (505)8084086 | 20-35 Age |
+| 82 | Gamze ADAL        | 22231514956 | K      | g_adal@miuul.com        | 17.01.1991 | 20     | 2          | (536)3915594 | (535)4321850 | 20-35 Age |
+| 94 | Gönül ATILANEVLAT | 68119051500 | K      | g_atilanevlat@miuul.com | 20.01.1991 | 42     | 732        | (553)1707137 | (533)6289816 | 20-35 Age |
+|    |
+
+***
+
+**4. Istanbul'da yaşayan kişileri Join kullanarak getiren sorguyu yazınız.**
+
+Solution:
+````sql
+SELECT TOP 10 C.*,CT.CITIES FROM CUSTOMERS C
+INNER JOIN CITIES CT ON C.CITYID = CT.ID
+WHERE CT.CITIES ='İSTANBUL'
+````
+
+#### Steps:
+The INNER JOIN keyword selects records that have matching values in both tables.
+
+  
+#### Answer:
+| ID  | CUSTOMERNAME          | TCNUMBER    | GENDER | EMAIL                  | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP  | CITIES   |
+| --- | --------------------- | ----------- | ------ | ---------------------- | ---------- | ------ | ---------- | ------------ | ------------ | --------- | -------- |
+| 15  | Yasin AĞAGÜL          | 32764684197 | E      | y_agagvl@miuul.com     | 19.10.1979 | 34     | 897        | (532)6102663 | (537)3381012 | 36-45 Age | İSTANBUL |
+| 88  | Sebahat CİLALITAŞ     | 65960134490 | K      | s_cilalitas@miuul.com  | 30.09.1978 | 34     | 64         | (535)7019065 | (532)2408341 | 36-45 Age | İSTANBUL |
+| 97  | Deniz BENDER          | 31619199155 | E      | d_bender@miuul.com     | 4.04.1986  | 34     | 134        | (542)4181722 | (536)4621320 | 36-45 Age | İSTANBUL |
+| 101 | Çağla BEĞEN           | 85581395736 | K      | c_begen@miuul.com      | 22.12.1991 | 34     | 81         | (535)1338012 | (533)8331511 | 20-35 Age | İSTANBUL |
+| 127 | Nurettin GAYRETLİ     | 2822523822  | E      | n_gayretli@miuul.com   | 27.04.1950 | 34     | 84         | (532)7969080 | (536)7322740 | 65 Over   | İSTANBUL |
+| 139 | Yeliz KÜÇÜKALP        | 65432369284 | K      | y_kvcvkalp@miuul.com   | 26.02.1965 | 34     | 488        | (555)9613650 | (543)1071715 | 56-65 Age | İSTANBUL |
+| 164 | Eylül GÜLÜ            | 56388773535 | K      | e_gvlv@miuul.com       | 24.08.1969 | 34     | 3          | (537)5953916 | (532)4647711 | 46-55 Age | İSTANBUL |
+| 174 | Müzeyyen OCAKÇI       | 89589164667 | K      | m_ocakci@miuul.com     | 19.02.1972 | 34     | 707        | (543)1576124 | (505)9181537 | 46-55 Age | İSTANBUL |
+| 199 | Muhammed Emin TEKKAYA | 87271968026 | E      | m_emin@miuul.com       | 19.04.1984 | 34     | 897        | (542)2911632 | (535)9881318 | 36-45 Age | İSTANBUL |
+| 208 | Neslihan KILIÇÇEKER   | 53734331933 | K      | n_kilicceker@miuul.com | 4.10.1982  | 34     | 707        | (543)1432619 | (505)2287257 | 36-45 Age | İSTANBUL |
+|     |
+***
+**5. Istanbul'da yaşayan kişileri subquery kullanarak getiren sorguyu yazınız.**
+
+Solution 1-
+````sql
+SELECT TOP 10 * FROM CUSTOMERS
+WHERE CITYID = (SELECT ID FROM CITIES WHERE CITIES ='İSTANBUL')
+````
+#### Steps:
+A subquery is a query that is nested inside a SELECT, INSERT, UPDATE, or DELETE statement, or inside another subquery.
+
+
+  
+#### Answer:
+| ID  | CUSTOMERNAME          | TCNUMBER    | GENDER | EMAIL                  | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP  |
+| --- | --------------------- | ----------- | ------ | ---------------------- | ---------- | ------ | ---------- | ------------ | ------------ | --------- |
+| 15  | Yasin AĞAGÜL          | 32764684197 | E      | y_agagvl@miuul.com     | 19.10.1979 | 34     | 897        | (532)6102663 | (537)3381012 | 36-45 Age |
+| 88  | Sebahat CİLALITAŞ     | 65960134490 | K      | s_cilalitas@miuul.com  | 30.09.1978 | 34     | 64         | (535)7019065 | (532)2408341 | 36-45 Age |
+| 97  | Deniz BENDER          | 31619199155 | E      | d_bender@miuul.com     | 4.04.1986  | 34     | 134        | (542)4181722 | (536)4621320 | 36-45 Age |
+| 101 | Çağla BEĞEN           | 85581395736 | K      | c_begen@miuul.com      | 22.12.1991 | 34     | 81         | (535)1338012 | (533)8331511 | 20-35 Age |
+| 127 | Nurettin GAYRETLİ     | 2822523822  | E      | n_gayretli@miuul.com   | 27.04.1950 | 34     | 84         | (532)7969080 | (536)7322740 | 65 Over   |
+| 139 | Yeliz KÜÇÜKALP        | 65432369284 | K      | y_kvcvkalp@miuul.com   | 26.02.1965 | 34     | 488        | (555)9613650 | (543)1071715 | 56-65 Age |
+| 164 | Eylül GÜLÜ            | 56388773535 | K      | e_gvlv@miuul.com       | 24.08.1969 | 34     | 3          | (537)5953916 | (532)4647711 | 46-55 Age |
+| 174 | Müzeyyen OCAKÇI       | 89589164667 | K      | m_ocakci@miuul.com     | 19.02.1972 | 34     | 707        | (543)1576124 | (505)9181537 | 46-55 Age |
+| 199 | Muhammed Emin TEKKAYA | 87271968026 | E      | m_emin@miuul.com       | 19.04.1984 | 34     | 897        | (542)2911632 | (535)9881318 | 36-45 Age |
+| 208 | Neslihan KILIÇÇEKER   | 53734331933 | K      | n_kilicceker@miuul.com | 4.10.1982  | 34     | 707        | (543)1432619 | (505)2287257 | 36-45 Age |
+|     |
+***
+**6. Hangi Şehirde Kaç müşterimizin olduğu bilgisini getiren sorguyu yazınız.**
+
+Solution 1-
+````sql
+SELECT CT.CITIES,COUNT(C.ID) AS CUSTOMERCOUNT FROM CUSTOMERS C
+INNER JOIN CITIES CT ON C.CITYID=CT.ID
+GROUP BY CT.CITIES
+````
+#### Steps:
+The GROUP BY statement groups rows that have the same values into summary rows, like "find the number of customers in each country".
+
+The GROUP BY statement is often used with aggregate functions (COUNT(), MAX(), MIN(), SUM(), AVG()) to group the result-set by one or more columns.
+
+  
+#### Answer:
+| CITIES         | CUSTOMERCOUNT |
+| -------------- | ------------- |
+| ADANA          | 16            |
+| ADIYAMAN       | 11            |
+| AFYONKARAHİSAR | 19            |
+| AĞRI           | 13            |
+| AKSARAY        | 12            |
+| AMASYA         | 5             |
+| ANKARA         | 29            |
+| ANTALYA        | 13            |
+| ARDAHAN        | 8             |
+| ARTVİN         | 12            |
+| AYDIN          | 15            |
+| BALIKESİR      | 20            |
+| BARTIN         | 2             |
+| BATMAN         | 6             |
+| BAYBURT        | 1             |
+| BİLECİK        | 7             |
+| BİNGÖL         | 12            |
+| BİTLİS         | 7             |
+| BOLU           | 9             |
+| BURDUR         | 11            |
+| BURSA          | 22            |
+| ÇANAKKALE      | 9             |
+| ÇANKIRI        | 9             |
+| ÇORUM          | 22            |
+| DENİZLİ        | 14            |
+| DİYARBAKIR     | 20            |
+| DÜZCE          | 2             |
+| EDİRNE         | 7             |
+| ELAZIĞ         | 13            |
+| ERZİNCAN       | 7             |
+| ERZURUM        | 14            |
+| ESKİŞEHİR      | 3             |
+| GAZİANTEP      | 25            |
+| GİRESUN        | 10            |
+| HAKKARİ        | 3             |
+| HATAY          | 7             |
+| IĞDIR          | 1             |
+| ISPARTA        | 19            |
+| İSTANBUL       | 47            |
+| İZMİR          | 24            |
+| KAHRAMANMARAŞ  | 8             |
+| KARABÜK        | 7             |
+| KARAMAN        | 1             |
+| KARS           | 2             |
+| KASTAMONU      | 23            |
+| KAYSERİ        | 17            |
+| KIRIKKALE      | 1             |
+| KIRKLARELİ     | 2             |
+| KIRŞEHİR       | 6             |
+| KİLİS          | 7             |
+| KOCAELİ        | 6             |
+| KONYA          | 19            |
+| KÜTAHYA        | 3             |
+| MALATYA        | 3             |
+| MANİSA         | 14            |
+| MARDİN         | 10            |
+| MERSİN         | 17            |
+| MUĞLA          | 12            |
+| MUŞ            | 7             |
+| NEVŞEHİR       | 5             |
+| NİĞDE          | 5             |
+| ORDU           | 9             |
+| OSMANİYE       | 12            |
+| RİZE           | 12            |
+| SAKARYA        | 5             |
+| SAMSUN         | 13            |
+| SİİRT          | 4             |
+| SİNOP          | 5             |
+| SİVAS          | 17            |
+| ŞANLIURFA      | 17            |
+| ŞIRNAK         | 110           |
+| TEKİRDAĞ       | 12            |
+| TOKAT          | 8             |
+| TRABZON        | 8             |
+| TUNCELİ        | 4             |
+| UŞAK           | 5             |
+| VAN            | 2             |
+| YALOVA         | 6             |
+| YOZGAT         | 13            |
+|                |
+
+***
+**7. 1990 ile 1995 yılları arasında doğan müşterileri çekiniz. 90ve95 de dahildir.**
+
+Solution 1-
+````sql
+SELECT TOP 10 * FROM CUSTOMERS
+WHERE BIRTHDATE BETWEEN '1990-01-01' AND '1995-12-31'
+````
+#### Steps:
+The BETWEEN operator selects values within a given range. The values can be numbers, text, or dates.
+The BETWEEN operator is inclusive: begin and end values are included. 
+
+Solution 2-
+````sql
+SELECT TOP 10 * FROM CUSTOMERS
+WHERE YEAR(BIRTHDATE) BETWEEN 1990 AND 1995
+````
+#### Steps:
+The DATEPART() function returns a specified part of a date. This function returns the result as an integer value. SELECT DATEPART(month, '2017/08/25')
+
+The YEAR() function returns the year part for a specified date.
+
+  
+#### Answer:
+| ID | CUSTOMERNAME      | TCNUMBER    | GENDER | EMAIL                   | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP  |
+| -- | ----------------- | ----------- | ------ | ----------------------- | ---------- | ------ | ---------- | ------------ | ------------ | --------- |
+| 6  | Ahmet İNCİKAPI    | 6722155596  | E      | a_incikapi@miuul.com    | 28.05.1991 | 53     | 225        | (532)2414618 | (538)8459085 | 20-35 Age |
+| 8  | Elif ÖZÇELİKBAŞ   | 84870496920 | K      | e_ozcelikbas@miuul.com  | 6.06.1993  | 73     | 815        | (536)9014627 | (544)3937372 | 20-35 Age |
+| 13 | Dilan DOKUYUCU    | 74659763913 | K      | d_dokuyucu@miuul.com    | 21.01.1993 | 25     | 333        | (538)8929868 | (534)4275461 | 20-35 Age |
+| 14 | Selim ÖZBAY       | 77720855989 | E      | s_ozbay@miuul.com       | 2.10.1992  | 73     | 815        | (535)5906635 | (533)4273519 | 20-35 Age |
+| 30 | Bülent KAÇAROĞLU  | 21971116249 | E      | b_kacaroglu@miuul.com   | 9.01.1995  | 42     | 311        | (554)6844639 | (541)5324664 | 20-35 Age |
+| 34 | Ela nur SEREK     | 53475314899 | K      | e_nur@miuul.com         | 11.01.1994 | 19     | 734        | (544)2251131 | (538)3066585 | 20-35 Age |
+| 57 | Leyla AYLANC      | 73737020787 | K      | l_aylanc@miuul.com      | 12.04.1992 | 60     | 431        | (555)6741797 | (554)7082859 | 20-35 Age |
+| 64 | Emrah KARAAT      | 43499469521 | E      | e_karaat@miuul.com      | 28.12.1990 | 20     | 724        | (544)6687598 | (505)8084086 | 20-35 Age |
+| 82 | Gamze ADAL        | 22231514956 | K      | g_adal@miuul.com        | 17.01.1991 | 20     | 2          | (536)3915594 | (535)4321850 | 20-35 Age |
+| 94 | Gönül ATILANEVLAT | 68119051500 | K      | g_atilanevlat@miuul.com | 20.01.1991 | 42     | 732        | (553)1707137 | (533)6289816 | 20-35 Age |
+|    |
+
+***
+**3. 1990 ile 1995 yılları arasında doğan müşterileri çekiniz. 90ve95 de dahildir.**
+
+Solution 1-
+````sql
+SELECT TOP 10 * FROM CUSTOMERS
+WHERE BIRTHDATE BETWEEN '1990-01-01' AND '1995-12-31'
+````
+#### Steps:
+The BETWEEN operator selects values within a given range. The values can be numbers, text, or dates.
+The BETWEEN operator is inclusive: begin and end values are included. 
+
+Solution 2-
+````sql
+SELECT TOP 10 * FROM CUSTOMERS
+WHERE YEAR(BIRTHDATE) BETWEEN 1990 AND 1995
+````
+#### Steps:
+The DATEPART() function returns a specified part of a date. This function returns the result as an integer value. SELECT DATEPART(month, '2017/08/25')
+
+The YEAR() function returns the year part for a specified date.
+
+  
+#### Answer:
+| ID | CUSTOMERNAME      | TCNUMBER    | GENDER | EMAIL                   | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP  |
+| -- | ----------------- | ----------- | ------ | ----------------------- | ---------- | ------ | ---------- | ------------ | ------------ | --------- |
+| 6  | Ahmet İNCİKAPI    | 6722155596  | E      | a_incikapi@miuul.com    | 28.05.1991 | 53     | 225        | (532)2414618 | (538)8459085 | 20-35 Age |
+| 8  | Elif ÖZÇELİKBAŞ   | 84870496920 | K      | e_ozcelikbas@miuul.com  | 6.06.1993  | 73     | 815        | (536)9014627 | (544)3937372 | 20-35 Age |
+| 13 | Dilan DOKUYUCU    | 74659763913 | K      | d_dokuyucu@miuul.com    | 21.01.1993 | 25     | 333        | (538)8929868 | (534)4275461 | 20-35 Age |
+| 14 | Selim ÖZBAY       | 77720855989 | E      | s_ozbay@miuul.com       | 2.10.1992  | 73     | 815        | (535)5906635 | (533)4273519 | 20-35 Age |
+| 30 | Bülent KAÇAROĞLU  | 21971116249 | E      | b_kacaroglu@miuul.com   | 9.01.1995  | 42     | 311        | (554)6844639 | (541)5324664 | 20-35 Age |
+| 34 | Ela nur SEREK     | 53475314899 | K      | e_nur@miuul.com         | 11.01.1994 | 19     | 734        | (544)2251131 | (538)3066585 | 20-35 Age |
+| 57 | Leyla AYLANC      | 73737020787 | K      | l_aylanc@miuul.com      | 12.04.1992 | 60     | 431        | (555)6741797 | (554)7082859 | 20-35 Age |
+| 64 | Emrah KARAAT      | 43499469521 | E      | e_karaat@miuul.com      | 28.12.1990 | 20     | 724        | (544)6687598 | (505)8084086 | 20-35 Age |
+| 82 | Gamze ADAL        | 22231514956 | K      | g_adal@miuul.com        | 17.01.1991 | 20     | 2          | (536)3915594 | (535)4321850 | 20-35 Age |
+| 94 | Gönül ATILANEVLAT | 68119051500 | K      | g_atilanevlat@miuul.com | 20.01.1991 | 42     | 732        | (553)1707137 | (533)6289816 | 20-35 Age |
+|    |
+
+***
+
+
+
 
 **12.CUSTOMERS TABLOSUNDA MUSTERININ YASINA GORE HESAPLAYARAK TOPLAM MUSTERI SAYILARINI GETIRIN.**
    NOT:AGEGROUP ALANI KULLANILMADAN SORGU GETIRILECEKTIR
