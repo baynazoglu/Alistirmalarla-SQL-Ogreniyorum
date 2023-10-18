@@ -673,8 +673,6 @@ The DATEDIFF() function returns the difference between two dates.
 
 
 
-***
-
 #### Answer:
 | ID | CUSTOMERNAME          | TCNUMBER    | GENDER | EMAIL                  | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP    |
 | -- | --------------------- | ----------- | ------ | ---------------------- | ---------- | ------ | ---------- | ------------ | ------------ | ----------- |
@@ -786,35 +784,51 @@ SELECT TOP 10 C.*,CT.CITIES,D.DISTRICT FROM CUSTOMERS C
 
 ***
 
-**4. What is the most purchased item on the menu and how many times was it purchased by all customers?**
+**14.  --Q15. Cities tablosundan "Ankara" kaydını sildiğimizi varsayalım. Bu durumda şehri "Ankara" olan müşterilerin şehir alanı boş gelecektir. Şehir alanı boş olan müşterileri listeleyen sorguyu yazınız.**
 
+
+Önce 'Ankara'yı silelim.
 ````sql
-SELECT 
-  menu.product_name,
-  COUNT(sales.product_id) AS most_purchased_item
-FROM dannys_diner.sales
-INNER JOIN dannys_diner.menu
-  ON sales.product_id = menu.product_id
-GROUP BY menu.product_name
-ORDER BY most_purchased_item DESC
-LIMIT 1;
+UPDATE CITIES SET CITIES = NULL WHERE ID= 6
 ````
-
+Solution -
+````sql
+ SELECT TOP 10 * FROM CUSTOMERS C
+ WHERE C.CITYID  = ( SELECT CT.ID FROM CITIES CT WHERE CT.CITIES IS NULL)
+````
+Ankara'yı tekrar eklemek için:
+````sql
+SET IDENTITY_INSERT CITIES ON -- ID değerimixz identity_insert off modundaydı önce onu açmamız lazım.
+INSERT INTO CITIES(ID,CITIES)
+VALUES(6,'ANKARA')
+SET IDENTITY_INSERT CITIES OFF -- ID için idendity_insert değerini kapattık.
+````
 #### Steps:
-- Perform a **COUNT** aggregation on the `product_id` column and **ORDER BY** the result in descending order using `most_purchased` field.
-- Apply the **LIMIT** 1 clause to filter and retrieve the highest number of purchased items.
+The INSERT INTO statement is used to insert new records in a table.
+
+The only way to insert values into a field that is defined as an “IDENTITY” (or autonumber) field, is to set the IDENTITY_INSERT option to “ON” prior to inserting data into the table.
+
 
 #### Answer:
-| most_purchased | product_name | 
-| ----------- | ----------- |
-| 8       | ramen |
-
-
-- Most purchased item on the menu is ramen which is 8 times. Yummy!
+| ID  | CUSTOMERNAME              | TCNUMBER    | GENDER | EMAIL                | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP    |
+| --- | ------------------------- | ----------- | ------ | -------------------- | ---------- | ------ | ---------- | ------------ | ------------ | ----------- |
+| 112 | Aslı GÜNE                 | 63618747382 | K      | a_gvne@miuul.com     | 6.05.1994  | 6      | 157        | (505)6442992 | (532)8235020 | 20-35 YAŞ   |
+| 135 | Güllü SALUR               | 76464619181 | K      | g_salur@miuul.com    | 24.01.1998 | 6      | 128        | (533)7408614 | (535)5992618 | 20-35 YAŞ   |
+| 160 | Rukiye ÜNGÖR              | 1490087423  | K      | r_vngor@miuul.com    | 7.07.1956  | 6      | 756        | (554)1519484 | (538)7692165 | 65 YAŞ ÜSTÜ |
+| 180 | Güler BEŞKAYA             | 87951772201 | K      | g_beskaya@miuul.com  | 21.07.1998 | 6      | 756        | (553)8215027 | (555)8771930 | 20-35 YAŞ   |
+| 188 | Sefa CANGAR               | 17673520419 | E      | s_cangar@miuul.com   | 31.07.1958 | 6      | 361        | (554)1434188 | (533)3133445 | 55-65 YAŞ   |
+| 209 | İzzet CANKURU             | 76469454575 | E      | i_cankuru@miuul.com  | 11.12.1978 | 6      | 257        | (555)3724345 | (541)4935289 | 36-45 YAŞ   |
+| 225 | Seval ÖZKANLI             | 52599001986 | K      | s_ozkanli@miuul.com  | 2.07.1995  | 6      | 425        | (534)7052964 | (538)6732660 | 20-35 YAŞ   |
+| 227 | Halil İbrahim BİMBİRDİREK | 12831119936 | E      | h_ibrahim@miuul.com  | 19.07.1971 | 6      | 756        | (544)4642995 | (537)9514174 | 46-55 YAŞ   |
+| 233 | Ecrin MÜRSEL              | 1693687461  | K      | e_mvrsel@miuul.com   | 17.01.1956 | 6      | 425        | (535)3784675 | (533)9489743 | 65 YAŞ ÜSTÜ |
+| 358 | Cihan SAYGINER            | 14412309644 | E      | c_sayginer@miuul.com | 26.03.1943 | 6      | 30         | (533)8984184 | (537)3434486 | 65 YAŞ ÜSTÜ |
+|     |
 
 ***
 
-**5. Which item was the most popular for each customer?**
+**15. Müşterilerimizin telefon numaralarının operatör bilgisini getirmek istiyoruz.(TELN1 ve TELNR2 alanlarının yanına operatör numarasını (532)(505) getirmek istiyoruz.) Bu sorgu için gereken SQL sorgusunu yazınız.**
+
+Solution -
 
 ````sql
 WITH most_popular AS (
