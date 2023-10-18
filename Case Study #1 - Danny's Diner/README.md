@@ -831,95 +831,79 @@ The only way to insert values into a field that is defined as an “IDENTITY” 
 Solution -
 
 ````sql
-WITH most_popular AS (
-  SELECT 
-    sales.customer_id, 
-    menu.product_name, 
-    COUNT(menu.product_id) AS order_count,
-    DENSE_RANK() OVER (
-      PARTITION BY sales.customer_id 
-      ORDER BY COUNT(sales.customer_id) DESC) AS rank
-  FROM dannys_diner.menu
-  INNER JOIN dannys_diner.sales
-    ON menu.product_id = sales.product_id
-  GROUP BY sales.customer_id, menu.product_name
-)
-
-SELECT 
-  customer_id, 
-  product_name, 
-  order_count
-FROM most_popular 
-WHERE rank = 1;
+ SELECT TOP 10 *,
+ SUBSTRING(TELNR1,2,3) AS OPERATOR1,
+ SUBSTRING(TELNR2,2,3) AS OPERATOR2
+ FROM CUSTOMERS
 ````
 
-*Each user may have more than 1 favourite item.*
-
 #### Steps:
-- Create a CTE named `fav_item_cte` and within the CTE, join the `menu` table and `sales` table using the `product_id` column.
-- Group results by `sales.customer_id` and `menu.product_name` and calculate the count of `menu.product_id` occurrences for each group. 
-- Utilize the **DENSE_RANK()** window function to calculate the ranking of each `sales.customer_id` partition based on the count of orders **COUNT(`sales.customer_id`)** in descending order.
-- In the outer query, select the appropriate columns and apply a filter in the **WHERE** clause to retrieve only the rows where the rank column equals 1, representing the rows with the highest order count for each customer.
+String verilerde istenilen karakter kadar verinin geri döndürülmesini sağlamak için SUBSTRING fonksiyonu kullanılır
+
+The LEFT() function extracts a number of characters from a string (starting from left).
+
 
 #### Answer:
-| customer_id | product_name | order_count |
-| ----------- | ---------- |------------  |
-| A           | ramen        |  3   |
-| B           | sushi        |  2   |
-| B           | curry        |  2   |
-| B           | ramen        |  2   |
-| C           | ramen        |  3   |
+| ID | CUSTOMERNAME          | TCNUMBER    | GENDER | EMAIL                  | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP    | OPERATOR1 | OPERATOR2 |
+| -- | --------------------- | ----------- | ------ | ---------------------- | ---------- | ------ | ---------- | ------------ | ------------ | ----------- | --------- | --------- |
+| 1  | Sevda AKÇAN           | 42074151323 | K      | s_akcan@miuul.com      | 12.05.1964 | 22     | 202        | (542)5255514 | (532)3438190 | 55-65 YAŞ   | 542       | 532       |
+| 2  | Sebahat ŞERALI        | 74789296130 | K      | s_serali@miuul.com     | 11.06.1943 | 78     | 473        | (534)7157144 | (532)2212126 | 65 YAŞ ÜSTÜ | 534       | 532       |
+| 3  | Irmak HAMİDİ          | 86856513494 | K      | i_hamidi@miuul.com     | 13.11.1973 | 21     | 675        | (533)2144819 | (555)1183975 | 46-55 YAŞ   | 533       | 555       |
+| 4  | Tuğçe AKKOÇ           | 50190579600 | K      | t_akkoc@miuul.com      | 8.06.1958  | 30     | 158        | (543)4243115 | (533)6299636 | 55-65 YAŞ   | 543       | 533       |
+| 5  | Necdet ERÇAM          | 26046030220 | E      | n_ercam@miuul.com      | 22.05.1986 | 60     | 718        | (532)6896237 | (534)2924742 | 36-45 YAŞ   | 532       | 534       |
+| 6  | Ahmet İNCİKAPI        | 6722155596  | E      | a_incikapi@miuul.com   | 28.05.1991 | 53     | 225        | (532)2414618 | (538)8459085 | 20-35 YAŞ   | 532       | 538       |
+| 7  | Arif TEMELOĞLU        | 43691911318 | E      | a_temeloglu@miuul.com  | 11.12.1967 | 40     | 638        | (554)5504524 | (534)6379277 | 55-65 YAŞ   | 554       | 534       |
+| 8  | Elif ÖZÇELİKBAŞ       | 84870496920 | K      | e_ozcelikbas@miuul.com | 6.06.1993  | 73     | 815        | (536)9014627 | (544)3937372 | 20-35 YAŞ   | 536       | 544       |
+| 9  | Ali Eymen DEVE        | 80011834707 | E      | a_eymen@miuul.com      | 23.01.1985 | 39     | 463        | (533)8082176 | (538)4811026 | 36-45 YAŞ   | 533       | 538       |
+| 10 | Muhammed Ali ABDULLAH | 64660973116 | E      | m_ali@miuul.com        | 7.05.1987  | 25     | 851        | (536)4359524 | (532)3864478 | 36-45 YAŞ   | 536       | 532       |
+|    |
 
-- Customer A and C's favourite item is ramen.
-- Customer B enjoys all items on the menu. He/she is a true foodie, sounds like me.
 
 ***
 
-**6. Which item was purchased first by the customer after they became a member?**
+**16.Müşterilerimizin telefon numaralarının operatör bilgisini getirmek istiyoruz. Örneğin telefon numaraları "50"ya da "55"ile başlayan X, "54" ile başlayan Y, "53" ile başlayan Z operatörü olsun. Burada hangi operatörden ne kadar müşterimiz olduğunu bilgisini getirecek sorguyu yazınız.**
 
 ```sql
-WITH joined_as_member AS (
-  SELECT
-    members.customer_id, 
-    sales.product_id,
-    ROW_NUMBER() OVER (
-      PARTITION BY members.customer_id
-      ORDER BY sales.order_date) AS row_num
-  FROM dannys_diner.members
-  INNER JOIN dannys_diner.sales
-    ON members.customer_id = sales.customer_id
-    AND sales.order_date > members.join_date
-)
-
-SELECT 
-  customer_id, 
-  product_name 
-FROM joined_as_member
-INNER JOIN dannys_diner.menu
-  ON joined_as_member.product_id = menu.product_id
-WHERE row_num = 1
-ORDER BY customer_id ASC;
+SELECT SUM(TELNR1_X + TELNR2_X) AS OPERATOR_X,
+SUM(TELNR1_Y + TELNR2_Y) AS OPERATOR_Y,
+SUM(TELNR1_Z + TELNR2_Z) AS OPERATOR_Z FROM
+(SELECT *,
+ CASE
+	WHEN TELNR1 LIKE '(50%' OR TELNR1 LIKE '(55%' THEN 1
+	ELSE 0
+END AS TELNR1_X,
+ CASE
+	WHEN TELNR1 LIKE '(54%' THEN 1
+	ELSE 0
+END AS TELNR1_Y,
+ CASE
+	WHEN TELNR1 LIKE '(53%' THEN 1
+	ELSE 0
+END AS TELNR1_Z,
+ CASE
+	WHEN TELNR2 LIKE '(50%' OR TELNR2 LIKE '(55%' THEN 1
+	ELSE 0
+END AS TELNR2_X,
+ CASE
+	WHEN TELNR2 LIKE '(54%' THEN 1
+	ELSE 0
+END AS TELNR2_Y,
+CASE
+	WHEN TELNR2 LIKE '(53%' THEN 1
+	ELSE 0
+END AS TELNR2_Z
+FROM CUSTOMERS) TT
 ```
 
-#### Steps:
-- Create a CTE named `joined_as_member` and within the CTE, select the appropriate columns and calculate the row number using the **ROW_NUMBER()** window function. The **PARTITION BY** clause divides the data by `members.customer_id` and the **ORDER BY** clause orders the rows within each `members.customer_id` partition by `sales.order_date`.
-- Join tables `dannys_diner.members` and `dannys_diner.sales` on `customer_id` column. Additionally, apply a condition to only include sales that occurred *after* the member's `join_date` (`sales.order_date > members.join_date`).
-- In the outer query, join the `joined_as_member` CTE with the `dannys_diner.menu` on the `product_id` column.
-- In the **WHERE** clause, filter to retrieve only the rows where the row_num column equals 1, representing the first row within each `customer_id` partition.
-- Order result by `customer_id` in ascending order.
-
 #### Answer:
-| customer_id | product_name |
-| ----------- | ---------- |
-| A           | ramen        |
-| B           | sushi        |
-
-- Customer A's first order as a member is ramen.
-- Customer B's first order as a member is sushi.
+| OPERATOR_X | OPERATOR_Y | OPERATOR_Z |
+| ---------- | ---------- | ---------- |
+| 461        | 478        | 963        |
+|            |
 
 ***
 
-**7. Which item was purchased just before the customer became a member?**
+**17. Which item was purchased just before the customer became a member?**
 
 ````sql
 WITH purchased_prior_member AS (
