@@ -863,6 +863,8 @@ The LEFT() function extracts a number of characters from a string (starting from
 
 **16.Müşterilerimizin telefon numaralarının operatör bilgisini getirmek istiyoruz. Örneğin telefon numaraları "50"ya da "55"ile başlayan X, "54" ile başlayan Y, "53" ile başlayan Z operatörü olsun. Burada hangi operatörden ne kadar müşterimiz olduğunu bilgisini getirecek sorguyu yazınız.**
 
+Solution -
+
 ```sql
 SELECT SUM(TELNR1_X + TELNR2_X) AS OPERATOR_X,
 SUM(TELNR1_Y + TELNR2_Y) AS OPERATOR_Y,
@@ -903,281 +905,156 @@ FROM CUSTOMERS) TT
 
 ***
 
-**17. Which item was purchased just before the customer became a member?**
+**17.Her ilde en çok müşteriye sahip olduğumuz ilçeleri müşteri sayısına göre çoktan za doğru sıralı şekilde getiren sorguyu yazınız.**
+
+Solution -
 
 ````sql
-WITH purchased_prior_member AS (
-  SELECT 
-    members.customer_id, 
-    sales.product_id,
-    ROW_NUMBER() OVER (
-      PARTITION BY members.customer_id
-      ORDER BY sales.order_date DESC) AS rank
-  FROM dannys_diner.members
-  INNER JOIN dannys_diner.sales
-    ON members.customer_id = sales.customer_id
-    AND sales.order_date < members.join_date
-)
-
-SELECT 
-  p_member.customer_id, 
-  menu.product_name 
-FROM purchased_prior_member AS p_member
-INNER JOIN dannys_diner.menu
-  ON p_member.product_id = menu.product_id
-WHERE rank = 1
-ORDER BY p_member.customer_id ASC;
+SELECT TOP 20 CT.CITIES,D.DISTRICT, COUNT(C.ID) AS CUSTOMERCOUNT FROM CUSTOMERS C
+INNER JOIN CITIES CT ON  CT.ID = C.CITYID 
+INNER JOIN DISTRICTS D ON D.ID = C.DISTRICTID 
+GROUP BY CT.CITIES,D.DISTRICT
+ORDER BY 1,3 DESC
 ````
-
-#### Steps:
-- Create a CTE called `purchased_prior_member`. 
-- In the CTE, select the appropriate columns and calculate the rank using the **ROW_NUMBER()** window function. The rank is determined based on the order dates of the sales in descending order within each customer's group.
-- Join `dannys_diner.members` table with `dannys_diner.sales` table based on the `customer_id` column, only including sales that occurred *before* the customer joined as a member (`sales.order_date < members.join_date`).
-- Join `purchased_prior_member` CTE with `dannys_diner.menu` table based on `product_id` column.
-- Filter the result set to include only the rows where the rank is 1, representing the earliest purchase made by each customer before they became a member.
-- Sort the result by `customer_id` in ascending order.
-
-#### Answer:
-| customer_id | product_name |
-| ----------- | ---------- |
-| A           | sushi        |
-| B           | sushi        |
-
-- Both customers' last order before becoming members are sushi.
-
-***
-
-**8. What is the total items and amount spent for each member before they became a member?**
-
-```sql
-SELECT 
-  sales.customer_id, 
-  COUNT(sales.product_id) AS total_items, 
-  SUM(menu.price) AS total_sales
-FROM dannys_diner.sales
-INNER JOIN dannys_diner.members
-  ON sales.customer_id = members.customer_id
-  AND sales.order_date < members.join_date
-INNER JOIN dannys_diner.menu
-  ON sales.product_id = menu.product_id
-GROUP BY sales.customer_id
-ORDER BY sales.customer_id;
-```
-
-#### Steps:
-- Select the columns `sales.customer_id` and calculate the count of `sales.product_id` as total_items for each customer and the sum of `menu.price` as total_sales.
-- From `dannys_diner.sales` table, join `dannys_diner.members` table on `customer_id` column, ensuring that `sales.order_date` is earlier than `members.join_date` (`sales.order_date < members.join_date`).
-- Then, join `dannys_diner.menu` table to `dannys_diner.sales` table on `product_id` column.
-- Group the results by `sales.customer_id`.
-- Order the result by `sales.customer_id` in ascending order.
-
-#### Answer:
-| customer_id | total_items | total_sales |
-| ----------- | ---------- |----------  |
-| A           | 2 |  25       |
-| B           | 3 |  40       |
-
-Before becoming members,
-- Customer A spent $25 on 2 items.
-- Customer B spent $40 on 3 items.
-
-***
-
-**9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier — how many points would each customer have?**
-
-```sql
-WITH points_cte AS (
-  SELECT 
-    menu.product_id, 
-    CASE
-      WHEN product_id = 1 THEN price * 20
-      ELSE price * 10 END AS points
-  FROM dannys_diner.menu
-)
-
-SELECT 
-  sales.customer_id, 
-  SUM(points_cte.points) AS total_points
-FROM dannys_diner.sales
-INNER JOIN points_cte
-  ON sales.product_id = points_cte.product_id
-GROUP BY sales.customer_id
-ORDER BY sales.customer_id;
-```
-
-#### Steps:
-Let's break down the question to understand the point calculation for each customer's purchases.
-- Each $1 spent = 10 points. However, `product_id` 1 sushi gets 2x points, so each $1 spent = 20 points.
-- Here's how the calculation is performed using a conditional CASE statement:
-	- If product_id = 1, multiply every $1 by 20 points.
-	- Otherwise, multiply $1 by 10 points.
-- Then, calculate the total points for each customer.
-
-#### Answer:
-| customer_id | total_points | 
-| ----------- | ---------- |
-| A           | 860 |
-| B           | 940 |
-| C           | 360 |
-
-- Total points for Customer A is $860.
-- Total points for Customer B is $940.
-- Total points for Customer C is $360.
-
-***
-
-**10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi — how many points do customer A and B have at the end of January?**
-
-```sql
-WITH dates_cte AS (
-  SELECT 
-    customer_id, 
-      join_date, 
-      join_date + 6 AS valid_date, 
-      DATE_TRUNC(
-        'month', '2021-01-31'::DATE)
-        + interval '1 month' 
-        - interval '1 day' AS last_date
-  FROM dannys_diner.members
-)
-
-SELECT 
-  sales.customer_id, 
-  SUM(CASE
-    WHEN menu.product_name = 'sushi' THEN 2 * 10 * menu.price
-    WHEN sales.order_date BETWEEN dates.join_date AND dates.valid_date THEN 2 * 10 * menu.price
-    ELSE 10 * menu.price END) AS points
-FROM dannys_diner.sales
-INNER JOIN dates_cte AS dates
-  ON sales.customer_id = dates.customer_id
-  AND dates.join_date <= sales.order_date
-  AND sales.order_date <= dates.last_date
-INNER JOIN dannys_diner.menu
-  ON sales.product_id = menu.product_id
-GROUP BY sales.customer_id;
-```
-
-#### Assumptions:
-- On Day -X to Day 1 (the day a customer becomes a member), each $1 spent earns 10 points. However, for sushi, each $1 spent earns 20 points.
-- From Day 1 to Day 7 (the first week of membership), each $1 spent for any items earns 20 points.
-- From Day 8 to the last day of January 2021, each $1 spent earns 10 points. However, sushi continues to earn double the points at 20 points per $1 spent.
-
-#### Steps:
-- Create a CTE called `dates_cte`. 
-- In `dates_cte`, calculate the `valid_date` by adding 6 days to the `join_date` and determine the `last_date` of the month by subtracting 1 day from the last day of January 2021.
-- From `dannys_diner.sales` table, join `dates_cte` on `customer_id` column, ensuring that the `order_date` of the sale is after the `join_date` (`dates.join_date <= sales.order_date`) and not later than the `last_date` (`sales.order_date <= dates.last_date`).
-- Then, join `dannys_diner.menu` table based on the `product_id` column.
-- In the outer query, calculate the points by using a `CASE` statement to determine the points based on our assumptions above. 
-    - If the `product_name` is 'sushi', multiply the price by 2 and then by 10. For orders placed between `join_date` and `valid_date`, also multiply the price by 2 and then by 10. 
-    - For all other products, multiply the price by 10.
-- Calculate the sum of points for each customer.
-
-#### Answer:
-| customer_id | total_points | 
-| ----------- | ---------- |
-| A           | 1020 |
-| B           | 320 |
-
-- Total points for Customer A is 1,020.
-- Total points for Customer B is 320.
-
-***
-
-## BONUS QUESTIONS
-
-**Join All The Things**
-
-**Recreate the table with: customer_id, order_date, product_name, price, member (Y/N)**
-
-```sql
-SELECT 
-  sales.customer_id, 
-  sales.order_date,  
-  menu.product_name, 
-  menu.price,
-  CASE
-    WHEN members.join_date > sales.order_date THEN 'N'
-    WHEN members.join_date <= sales.order_date THEN 'Y'
-    ELSE 'N' END AS member_status
-FROM dannys_diner.sales
-LEFT JOIN dannys_diner.members
-  ON sales.customer_id = members.customer_id
-INNER JOIN dannys_diner.menu
-  ON sales.product_id = menu.product_id
-ORDER BY members.customer_id, sales.order_date
-```
  
-#### Answer: 
-| customer_id | order_date | product_name | price | member |
-| ----------- | ---------- | -------------| ----- | ------ |
-| A           | 2021-01-01 | sushi        | 10    | N      |
-| A           | 2021-01-01 | curry        | 15    | N      |
-| A           | 2021-01-07 | curry        | 15    | Y      |
-| A           | 2021-01-10 | ramen        | 12    | Y      |
-| A           | 2021-01-11 | ramen        | 12    | Y      |
-| A           | 2021-01-11 | ramen        | 12    | Y      |
-| B           | 2021-01-01 | curry        | 15    | N      |
-| B           | 2021-01-02 | curry        | 15    | N      |
-| B           | 2021-01-04 | sushi        | 10    | N      |
-| B           | 2021-01-11 | sushi        | 10    | Y      |
-| B           | 2021-01-16 | ramen        | 12    | Y      |
-| B           | 2021-02-01 | ramen        | 12    | Y      |
-| C           | 2021-01-01 | ramen        | 12    | N      |
-| C           | 2021-01-01 | ramen        | 12    | N      |
-| C           | 2021-01-07 | ramen        | 12    | N      |
+
+#### Answer:
+| CITIES         | DISTRICT              | CUSTOMERCOUNT |
+| -------------- | --------------------- | ------------- |
+| ADANA          | SEYHAN                | 8             |
+| ADANA          | ALADAĞ                | 6             |
+| ADANA          | YÜREĞİR               | 2             |
+| ADIYAMAN       | ADIYAMAN MERKEZ       | 5             |
+| ADIYAMAN       | BESNİ                 | 2             |
+| ADIYAMAN       | SAMSAT                | 2             |
+| ADIYAMAN       | GÖLBAŞI/ADIYAMAN      | 1             |
+| ADIYAMAN       | KAHTA                 | 1             |
+| AFYONKARAHİSAR | AFYONKARAHİSAR MERKEZ | 5             |
+| AFYONKARAHİSAR | BOLVADİN              | 4             |
+| AFYONKARAHİSAR | DİNAR                 | 4             |
+| AFYONKARAHİSAR | DAZKIRI               | 2             |
+| AFYONKARAHİSAR | EMİRDAĞ               | 1             |
+| AFYONKARAHİSAR | İHSANİYE              | 1             |
+| AFYONKARAHİSAR | SİNANPAŞA             | 1             |
+| AFYONKARAHİSAR | SULTANDAĞI            | 1             |
+| AĞRI           | TUTAK                 | 4             |
+| AĞRI           | ELEŞKİRT              | 3             |
+| AĞRI           | AĞRI MERKEZ           | 2             |
+| AĞRI           | DİYADİN               | 2             |
+|                |
+
 
 ***
 
-**Rank All The Things**
+**18. Müşterilerin doğum günlerini türkçe haftanın günleri olarak getiren sorguyu yazınız.**
 
-**Danny also requires further information about the ```ranking``` of customer products, but he purposely does not need the ranking for non-member purchases so he expects null ```ranking``` values for the records when customers are not yet part of the loyalty program.**
+Solution -
 
 ```sql
-WITH customers_data AS (
-  SELECT 
-    sales.customer_id, 
-    sales.order_date,  
-    menu.product_name, 
-    menu.price,
-    CASE
-      WHEN members.join_date > sales.order_date THEN 'N'
-      WHEN members.join_date <= sales.order_date THEN 'Y'
-      ELSE 'N' END AS member_status
-  FROM dannys_diner.sales
-  LEFT JOIN dannys_diner.members
-    ON sales.customer_id = members.customer_id
-  INNER JOIN dannys_diner.menu
-    ON sales.product_id = menu.product_id
-)
-
-SELECT 
-  *, 
-  CASE
-    WHEN member_status = 'N' then NULL
-    ELSE RANK () OVER (
-      PARTITION BY customer_id, member_status
-      ORDER BY order_date
-  ) END AS ranking
-FROM customers_data;
+SET LANGUAGE Turkish
+SELECT TOP 10 CUSTOMERNAME,
+DATENAME(DW,BIRTHDATE) AS BIRTHDAY
+FROM CUSTOMERS
 ```
 
-#### Answer: 
-| customer_id | order_date | product_name | price | member | ranking | 
-| ----------- | ---------- | -------------| ----- | ------ |-------- |
-| A           | 2021-01-01 | sushi        | 10    | N      | NULL
-| A           | 2021-01-01 | curry        | 15    | N      | NULL
-| A           | 2021-01-07 | curry        | 15    | Y      | 1
-| A           | 2021-01-10 | ramen        | 12    | Y      | 2
-| A           | 2021-01-11 | ramen        | 12    | Y      | 3
-| A           | 2021-01-11 | ramen        | 12    | Y      | 3
-| B           | 2021-01-01 | curry        | 15    | N      | NULL
-| B           | 2021-01-02 | curry        | 15    | N      | NULL
-| B           | 2021-01-04 | sushi        | 10    | N      | NULL
-| B           | 2021-01-11 | sushi        | 10    | Y      | 1
-| B           | 2021-01-16 | ramen        | 12    | Y      | 2
-| B           | 2021-02-01 | ramen        | 12    | Y      | 3
-| C           | 2021-01-01 | ramen        | 12    | N      | NULL
-| C           | 2021-01-01 | ramen        | 12    | N      | NULL
-| C           | 2021-01-07 | ramen        | 12    | N      | NULL
+#### Steps:
+The DATENAME() function returns a specified part of a date.
+
+This function returns the result as a string value.
+
+
+
+#### Answer:
+| CUSTOMERNAME          | BIRTHDAY  |
+| --------------------- | --------- |
+| Sevda AKÇAN           | Salı      |
+| Sebahat ŞERALI        | Cuma      |
+| Irmak HAMİDİ          | Salı      |
+| Tuğçe AKKOÇ           | Pazar     |
+| Necdet ERÇAM          | Perşembe  |
+| Ahmet İNCİKAPI        | Salı      |
+| Arif TEMELOĞLU        | Pazartesi |
+| Elif ÖZÇELİKBAŞ       | Pazar     |
+| Ali Eymen DEVE        | Çarşamba  |
+| Muhammed Ali ABDULLAH | Perşembe  |
+|                       |
+
+
+
+
+***
+
+
+**19. Müşterilerin doğum günlerinin bu yıl hangi güne denk geldiğini gösteren sorguyu yazınız.**
+
+Solution -
+
+```sql
+
+SELECT TOP 10 *,
+	CASE
+		WHEN KMKK.KACGUNGECTI%7 = 0 THEN DATENAME(weekday, GETDATE())
+		WHEN KMKK.KACGUNGECTI%7 = 1 THEN DATENAME(weekday, DATEADD(day, -6, GETDATE()))
+		WHEN KMKK.KACGUNGECTI%7 = 2 THEN DATENAME(weekday, DATEADD(day, -5, GETDATE()))
+		WHEN KMKK.KACGUNGECTI%7 = 3 THEN DATENAME(weekday, DATEADD(day, -4, GETDATE()))
+		WHEN KMKK.KACGUNGECTI%7 = 4 THEN DATENAME(weekday, DATEADD(day, -3, GETDATE()))
+		WHEN KMKK.KACGUNGECTI%7 = 5 THEN DATENAME(weekday, DATEADD(day, -2, GETDATE()))
+		WHEN KMKK.KACGUNGECTI%7 = 6 THEN DATENAME(weekday, DATEADD(day, -1, GETDATE()))
+	END AS HANGIGUN
+FROM
+(SELECT KMK.CUSTOMERNAME, DATEDIFF(DAY,KMK.BIRTHDATE,KMK.TODAYSDATE) AS KACGUNGECTI
+FROM 
+(SELECT *, GETDATE() AS TODAYSDATE FROM CUSTOMERS) KMK)KMKK
+```
+
+#### Steps:
+ The DATEADD() function adds a time/date interval to a date and then returns the date.
+
+
+
+#### Answer:
+| CUSTOMERNAME          | KACGUNGECTI | HANGIGUN  |
+| --------------------- | ----------- | --------- |
+| Sevda AKÇAN           | 21709       | Cumartesi |
+| Sebahat ŞERALI        | 29350       | Çarşamba  |
+| Irmak HAMİDİ          | 18237       | Cumartesi |
+| Tuğçe AKKOÇ           | 23874       | Pazartesi |
+| Necdet ERÇAM          | 13664       | Perşembe  |
+| Ahmet İNCİKAPI        | 11832       | Cumartesi |
+| Arif TEMELOĞLU        | 20401       | Pazar     |
+| Elif ÖZÇELİKBAŞ       | 11092       | Pazartesi |
+| Ali Eymen DEVE        | 14148       | Cuma      |
+| Muhammed Ali ABDULLAH | 13314       | Perşembe  |
+|                       |
+
+
+***
+
+**20.Doğum günü bugün olan müşterileri listeleyiniz.**
+
+Solution-
+
+```sql
+SELECT * FROM CUSTOMERS
+WHERE DATEPART(DAY,BIRTHDATE)=DATEPART(DAY,GETDATE()) AND DATEPART(MONTH,BIRTHDATE)=DATEPART(MONTH,GETDATE()) 
+```
+
+
+#### Steps:
+The DATEPART() function returns a specified part of a date.
+
+This function returns the result as an integer value.
+
+#### Answer:
+| ID  | CUSTOMERNAME      | TCNUMBER    | GENDER | EMAIL                | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP    |
+| --- | ----------------- | ----------- | ------ | -------------------- | ---------- | ------ | ---------- | ------------ | ------------ | ----------- |
+| 15  | Yasin AĞAGÜL      | 32764684197 | E      | y_agagvl@miuul.com   | 19.10.1979 | 34     | 897        | (532)6102663 | (537)3381012 | 36-45 YAŞ   |
+| 84  | Muhammed Ali ORUC | 1192159330  | E      | m_ali@miuul.com      | 19.10.1996 | 1      | 641        | (536)9081564 | (555)6774295 | 20-35 YAŞ   |
+| 185 | Ersin SEKMEN      | 44465589374 | E      | e_sekmen@miuul.com   | 19.10.1975 | 23     | 343        | (532)7922697 | (544)5402036 | 46-55 YAŞ   |
+| 923 | İsmail GÜLKOKAN   | 10165087167 | E      | i_gvlkokan@miuul.com | 19.10.1948 | 68     | 20         | (541)3681294 | (555)6582823 | 65 YAŞ ÜSTÜ |
+|     |
+
+
+
 
 ***
