@@ -21,9 +21,9 @@ Bu senaryoda Customer verisetimize göre soruları cevaplıyor olacağız.
 
 ## Question and Solution
 
- I have also published this case study on [Medium](https://katiehuangx.medium.com/8-week-sql-challenge-case-study-week-1-dannys-diner-2ba026c897ab?source=friends_link&sk=ed355696f5a70ff8b3d5a1b905e5dabe).
+ I have also published this case study on [Medium](https://medium.com/@fbaynazoglu).
 
-If you have any questions, reach out to me on [LinkedIn](https://www.linkedin.com/in/katiehuangx/).
+If you have any questions, reach out to me on [LinkedIn](https://www.linkedin.com/in/baynazoglu/).
 
 **1. Customer tablosundan adı "A" ile başlayanlardan ilk 10unu yazdır.**
 
