@@ -1,4 +1,4 @@
-# 💸 Case Study #1: Müşteri Veritabanı
+# 💸 Case Study #1: Customer Database
 <img src="https://www.xero.com/blog/wp-content/uploads/2020/07/164402-Xero-blog-header-01_800x480_acf_cropped.png" alt="Image" width="400" height="400">
 
 ## 📚 Table of Contents
@@ -12,7 +12,7 @@ Please note that all the information regarding the case study has been sourced f
 
 ## Business Task
 
-Bu senaryoda Customer verisetimize göre soruları cevaplıyor olacağız.
+In this scenario, we will be answering questions according to our Customer dataset.
 ***
 
 ## Entity Relationship Diagram
@@ -25,7 +25,7 @@ Bu senaryoda Customer verisetimize göre soruları cevaplıyor olacağız.
 
 If you have any questions, reach out to me on [LinkedIn](https://www.linkedin.com/in/baynazoglu/).
 
-**1. Customer tablosundan adı "A" ile başlayanlardan ilk 10unu yazdır.**
+**1. Print the first 10 names starting with "A" from the Customer table.**
 
 ````sql
 SELECT TOP 10 * FROM CUSTOMERS
@@ -53,7 +53,7 @@ WHERE CUSTOMERNAME LIKE 'A%'
 
 ***
 
-**2. Customers tablosunda adı "N" harfi ile biten ve cinsiyeti erkek olan 10 kişiyi sıralayınız.**
+**2.List 10 people whose names end with the letter "N" and whose gender is male in the "Customers" table.**
 
 ````sql
 SELECT TOP 10 * FROM CUSTOMERS
@@ -79,7 +79,7 @@ WHERE CUSTOMERNAME LIKE '%N' AND GENDER = 'E'
 |     |
 
 ***
-**3. 1990 ile 1995 yılları arasında doğan müşterileri çekiniz. 90ve95 de dahildir.**
+**3. Display customers born between 1990 and 1995 years including 1990 and 1995.**
 
 Solution 1-
 ````sql
@@ -118,7 +118,8 @@ The YEAR() function returns the year part for a specified date.
 
 ***
 
-**4. Istanbul'da yaşayan kişileri Join kullanarak getiren sorguyu yazınız.**
+**4. Write a query that retrieves people living in Istanbul using Join.**
+
 
 Solution:
 ````sql
@@ -146,7 +147,7 @@ The INNER JOIN keyword selects records that have matching values in both tables.
 | 208 | Neslihan KILIÇÇEKER   | 53734331933 | K      | n_kilicceker@miuul.com | 4.10.1982  | 34     | 707        | (543)1432619 | (505)2287257 | 36-45 Age | İSTANBUL |
 |     |
 ***
-**5. Istanbul'da yaşayan kişileri subquery kullanarak getiren sorguyu yazınız.**
+**5. Write a query that retrieves people living in Istanbul using subquery.**
 
 Solution 1-
 ````sql
@@ -173,7 +174,8 @@ A subquery is a query that is nested inside a SELECT, INSERT, UPDATE, or DELETE 
 | 208 | Neslihan KILIÇÇEKER   | 53734331933 | K      | n_kilicceker@miuul.com | 4.10.1982  | 34     | 707        | (543)1432619 | (505)2287257 | 36-45 Age |
 |     |
 ***
-**6. Hangi Şehirde Kaç müşterimizin olduğu bilgisini getiren sorguyu yazınız.**
+
+**6. Write the query that returns the information about how many customers we have in which city.**
 
 Solution 1-
 ````sql
@@ -279,7 +281,8 @@ The GROUP BY statement is often used with aggregate functions (COUNT(), MAX(), M
 |                |
 
 ***
-**7. 10'dan fazla müşterimiz olan şehirleri müşteri sayısı ile birlikte müşteri sayısına göre fazladan aza doğru sıralı şekilde getiriniz.**
+
+**7. Let's see the cities with more than 10 customers and the number of customers per cities in order from more to less according to the number of customers.**
 
 Solution 1-
 ````sql
@@ -347,7 +350,8 @@ The HAVING clause was added to SQL because the WHERE keyword cannot be used with
 |                |
 
 ***
-**8. Hangi şehirde kaç erkek, kaç kadın müşterimiz olduğu bilgisini getiren sorguyu yazınız.**
+
+**8. Write the query that returns the information about how many male and how many female customers we have in which city.**
 
 
 Solution 1-
@@ -514,9 +518,12 @@ ORDER BY CITIES ASC
 | ZONGULDAK      | K      | 3             |
 |                |
 
+E: Male in Turkish
+K: Female in Turkish
+
 ***
 
-**9. Hangi şehirde kaç erkek, kaç kadın müşterimizin olduğu bilgisini "erkeksayısı" ve "kadınsayısı" columnları yaratarak getiren sorguyu yazınız.**
+** 9. Write the query that retrieves the information about how many male and how many female customers we have in which city by creating "number of men" and "number of women" columns. **
 
 
 Solution 1-
@@ -613,10 +620,13 @@ FROM CITIES CT
 | DÜZCE          | 1           | 1           |
 |                |
 
+"ERKEKSAYISI" : Number of Men in Turkish
+"KADINSAYISI" : Number of Women in Turkish
+
 ***
 
 
-**10.Customers tablosuna yaş grubu için yeni bir alan ekleyiniz.(Adı AGEGROUP veri tipi VARCHAR(50)).**
+**10.Add a new column for age group to the Customers table (Name AGEGROUP data type VARCHAR(50)).**
 
 
 Solution 1-
@@ -633,7 +643,8 @@ The ALTER TABLE statement is also used to add and drop various constraints on an
 ***
 
 
-**11.Customers tablosuna eklediğiniz AGEGROUP alanını 20-35 yaş arası, 36-45 yaş arası, 46-55 yaş arası, 55-65 yaş arası ve 65 yaş üstü olarak güncelleyiniz.**
+**11.Update the AGEGROUP column you added to the Customers table as:
+20-35 years old, 36-45 years old, 46-55 years old, 55-65 years old and over 65 years old.**
 
 
 Solution 1-
@@ -688,10 +699,12 @@ The DATEDIFF() function returns the difference between two dates.
 | 10 | Muhammed Ali ABDULLAH | 64660973116 | E      | m_ali@miuul.com        | 7.05.1987  | 25     | 851        | (536)4359524 | (532)3864478 | 36-45 YAŞ   |
 |    |
 
-***
+YAŞ: Age in Turkish
 
-**12.Customers tablosunda müşterinin yaşına göre hesaplanarak, hangi yaş aralığında kaç kişi olduğunu getiren sorguyu yazınız.**
-NOT:Bir önceki soruda oluşturduğumuz 'agegroup' alanını kullanmadan yazınız.
+**12.Write the query that is calculated according to the age of the customer in the Customers table and returns how many people are in which age range.**
+
+****
+NOTE: Write without using the 'agegroup' field we created in the previous question.
 
 Solution 1-
 ````sql
@@ -742,11 +755,11 @@ GROUP BY AGEGROUP2
 ORDER BY AGEGROUP2
 ````
 #### Steps:
-Group by yaparken tekrar case kullanmak kodu uzatabilir. Bu sebeple dynamic view yapabiliriz. Dinamik view bir sql sorgusunun bir yukarısına çıkıp orada sanki tablodan çekiyormuş gibi sorgu yazmaktır. 
+Using "case" again while doing "group by" can extend the code. For this reason, we can make dynamic view. Dynamic view is to go up to a sql query and write a query there as if you are pulling from the table. 
 
 ***
  
- **13.İstanbul'da yaşayıp ilçesi "Kadıköy" dışında olanları listeleyiniz.**
+ **13.Let's see the people who live in Istanbul and whose district is not "Kadıköy".**
  
 Solution 1-
 
@@ -758,7 +771,7 @@ Solution 1-
 ````
 
 Solution 2-
-Inner Join ile yazalım.
+Let's use Inner Join.
 ````sql
 SELECT TOP 10 C.*,CT.CITIES,D.DISTRICT FROM CUSTOMERS C
  INNER JOIN DISTRICTS D ON C.DISTRICTID=D.ID
@@ -784,10 +797,11 @@ SELECT TOP 10 C.*,CT.CITIES,D.DISTRICT FROM CUSTOMERS C
 
 ***
 
-**14.  --Q15. Cities tablosundan "Ankara" kaydını sildiğimizi varsayalım. Bu durumda şehri "Ankara" olan müşterilerin şehir alanı boş gelecektir. Şehir alanı boş olan müşterileri listeleyen sorguyu yazınız.**
+**14.Suppose we delete the "Ankara" record from the Cities table. In this case, the "city" column of the customers whose city is "Ankara" will be empty. Write the query that lists the customers whose "city" column is empty.**
 
 
-Önce 'Ankara'yı silelim.
+First, 'Let's delete "Ankara". If we know the ID of Ankara which is 6 we can easily delete it.
+
 ````sql
 UPDATE CITIES SET CITIES = NULL WHERE ID= 6
 ````
@@ -796,7 +810,7 @@ Solution -
  SELECT TOP 10 * FROM CUSTOMERS C
  WHERE C.CITYID  = ( SELECT CT.ID FROM CITIES CT WHERE CT.CITIES IS NULL)
 ````
-Ankara'yı tekrar eklemek için:
+To add Ankara again:
 ````sql
 SET IDENTITY_INSERT CITIES ON -- ID değerimixz identity_insert off modundaydı önce onu açmamız lazım.
 INSERT INTO CITIES(ID,CITIES)
@@ -826,7 +840,7 @@ The only way to insert values into a field that is defined as an “IDENTITY” 
 
 ***
 
-**15. Müşterilerimizin telefon numaralarının operatör bilgisini getirmek istiyoruz.(TELN1 ve TELNR2 alanlarının yanına operatör numarasını (532)(505) getirmek istiyoruz.) Bu sorgu için gereken SQL sorgusunu yazınız.**
+**15.We want to get the operator information of our customers' phone numbers. (We want to get the operator number (532)(505) next to TELN1 and TELNR2 columns). Write the SQL query required for this query.**
 
 Solution -
 
@@ -861,7 +875,7 @@ The LEFT() function extracts a number of characters from a string (starting from
 
 ***
 
-**16.Müşterilerimizin telefon numaralarının operatör bilgisini getirmek istiyoruz. Örneğin telefon numaraları "50"ya da "55"ile başlayan X, "54" ile başlayan Y, "53" ile başlayan Z operatörü olsun. Burada hangi operatörden ne kadar müşterimiz olduğunu bilgisini getirecek sorguyu yazınız.**
+**16.We want to return the operator information of our customers' phone numbers. For example, let the phone numbers be operator X starting with "50" or "55", operator Y starting with "54", operator Z starting with "53". Write the query that will return the information about how many customers we have from which operator.**
 
 Solution -
 
@@ -905,7 +919,7 @@ FROM CUSTOMERS) TT
 
 ***
 
-**17.Her ilde en çok müşteriye sahip olduğumuz ilçeleri müşteri sayısına göre çoktan za doğru sıralı şekilde getiren sorguyu yazınız.**
+**17.Write the query that brings the districts in each province where we have the most customers, ordered from most to least according to the number of customers.**
 
 Solution -
 
@@ -946,7 +960,7 @@ ORDER BY 1,3 DESC
 
 ***
 
-**18. Müşterilerin doğum günlerini türkçe haftanın günleri olarak getiren sorguyu yazınız.**
+**18.Write the query that brings customers' birthdays as days of the week in Turkish.**
 
 Solution -
 
@@ -980,12 +994,18 @@ This function returns the result as a string value.
 |                       |
 
 
-
+Monday   	pazartesi 
+Tuesday 	salı 
+Wednesday 	çarşamba 
+Thursday 	perşembe 
+Friday 	        cuma 
+Saturday 	cumartesi 
+Sunday 	        pazar 
 
 ***
 
 
-**19. Müşterilerin doğum günlerinin bu yıl hangi güne denk geldiğini gösteren sorguyu yazınız.**
+**19.Write the query that prints the day of the customer's birthday in this year.**
 
 Solution -
 
@@ -1027,10 +1047,11 @@ FROM
 | Muhammed Ali ABDULLAH | 13314       | Perşembe  |
 |                       |
 
+KACGUNGECTI: How many days have passed since birth.
 
 ***
 
-**20.Doğum günü bugün olan müşterileri listeleyiniz.**
+**20.List customers whose birthday is today.**
 
 Solution-
 
