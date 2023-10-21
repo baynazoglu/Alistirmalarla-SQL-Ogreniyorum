@@ -1,29 +1,32 @@
 # 💸 Case Study #1: Müşteri Veritabanı
 <img src="https://www.xero.com/blog/wp-content/uploads/2020/07/164402-Xero-blog-header-01_800x480_acf_cropped.png" alt="Image" width="400" height="400">
 
-## 📚 Table of Contents
-- [Business Task](#business-task)
-- [Entity Relationship Diagram](#entity-relationship-diagram)
-- [Question and Solution](#question-and-solution)
+## 📚 İçindekiler
+- [İş Görevi](#business-task)
+- [Varlık İlişki Diyagramı](#entity-relationship-diagram)
+- [Soru ve Çözüm](#question-and-solution)
 
-Please note that all the information regarding the case study has been sourced from the following link: [here](https://www.udemy.com/course/alistirmalarla-sql-ogreniyorum/). 
+Veriseti ve ilgili tüm bilgilerin aşağıdaki bağlantıdan alınmıştır:
+[Alıştırmalarla SQL Öğreniyorum.](https://www.udemy.com/course/alistirmalarla-sql-ogreniyorum/). 
 
 ***
 
-## Business Task
+## İş Görevi
 
 Bu senaryoda Customer verisetimize göre soruları cevaplıyor olacağız.
 ***
 
-## Entity Relationship Diagram
+## Varlık İlişki Diyagramı
 
 <img src="https://github.com/baynazoglu/SQL-ALISTIRMALARI/blob/08ca455e314b92db37e4bddd19a3baff7422b8e8/Case%20Study%20%231%20-%20Danny's%20Diner/customer_1.png" alt="Image" width="500" height="400" >
 
-## Question and Solution
+## Soru ve Çözüm
 
- I have also published this case study on [Medium](https://medium.com/@fbaynazoglu).
+ Bu çalışmayı ayrıca  Medium'da da yayınladım. [Medium](https://medium.com/@fbaynazoglu).
 
-If you have any questions, reach out to me on [LinkedIn](https://www.linkedin.com/in/baynazoglu/).
+Herhangi bir sorunuz varsa, bana bu adresten ulaşabilirsiniz. [LinkedIn](https://www.linkedin.com/in/baynazoglu/).
+***
+
 
 **1. Customer tablosundan adı "A" ile başlayanlardan ilk 10unu yazdır.**
 
@@ -33,11 +36,14 @@ WHERE CUSTOMERNAME LIKE 'A%'
 
 ````
 
-#### Steps:
-- Use **LIKE** to retrieve the data in a column of a table, based on a specified pattern.
-- Use **%** to specify conditions in an SQL statement 
+#### Basamaklar:
+-LIKE komutu, bir sütundaki belirli bir veriyi aramak için bir WHERE koşuluyla kullanılır.
+- %- Yüzde işareti sıfır, bir veya birden çok karakteri temsil eder.
+WHERE Soyad LIKE 'a%' : “a” ile başlayan tüm verileri bulur.
+WHERE Soyad LIKE '%a' : “a” ile biten tüm verileri bulur.
 
-#### Answer:
+
+#### Cevap:
 | ID | CUSTOMERNAME         | TCNUMBER    | GENDER | EMAIL                 | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       |
 | -- | -------------------- | ----------- | ------ | --------------------- | ---------- | ------ | ---------- | ------------ | ------------ |
 | 6  | Ahmet İNCİKAPI       | 6722155596  | E      | a_incikapi@miuul.com  | 28.05.1991 | 53     | 225        | (532)2414618 | (538)8459085 |
@@ -60,10 +66,11 @@ SELECT TOP 10 * FROM CUSTOMERS
 WHERE CUSTOMERNAME LIKE '%N' AND GENDER = 'E'
 ````
 
-#### Steps:
-- The AND operator is used to filter records based on more than one condition, like if you want to return all customers from Spain that starts with the letter 'G':
+#### Basamaklar:
+- Verilen tüm koşulları yerine getirmesi gereken satırları seçmek isterseniz, mantıksal işleç AND’yi kullanabilirsiniz.Örneğin: 10 ila 15 yaş arasındaki öğrencilerin isimlerini bulmak için:
+WHERE age >= 10 AND age <= 15;
 
-#### Answer:
+#### Cevap:
 | ID  | CUSTOMERNAME          | TCNUMBER    | GENDER | EMAIL                   | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP  |
 | --- | --------------------- | ----------- | ------ | ----------------------- | ---------- | ------ | ---------- | ------------ | ------------ | --------- |
 | 58  | Umut SAFALTIN         | 51937342075 | E      | u_safaltin@miuul.com    | 16.08.1952 | 37     | 720        | (542)2692488 | (533)6412455 | 65 Over   |
@@ -81,27 +88,25 @@ WHERE CUSTOMERNAME LIKE '%N' AND GENDER = 'E'
 ***
 **3. 1990 ile 1995 yılları arasında doğan müşterileri çekiniz. 90ve95 de dahildir.**
 
-Solution 1-
+Çözüm 1-
 ````sql
 SELECT TOP 10 * FROM CUSTOMERS
 WHERE BIRTHDATE BETWEEN '1990-01-01' AND '1995-12-31'
 ````
-#### Steps:
-The BETWEEN operator selects values within a given range. The values can be numbers, text, or dates.
-The BETWEEN operator is inclusive: begin and end values are included. 
+#### Basamaklar:
+SQL’de “BETWEEN” operatörü, bir değerin belirli bir aralıkta olup olmadığını kontrol etmek için kullanılır. Bu aralık, iki değer arasında olabilir veya bir değer ve bir üst sınır arasında olabilir. “BETWEEN” ifadesi, genellikle “WHERE” ifadesi içinde kullanılır ve bir sorgu sonucunu filtrelemek için kullanılır.
 
-Solution 2-
+Çözüm 2-
 ````sql
 SELECT TOP 10 * FROM CUSTOMERS
 WHERE YEAR(BIRTHDATE) BETWEEN 1990 AND 1995
 ````
-#### Steps:
-The DATEPART() function returns a specified part of a date. This function returns the result as an integer value. SELECT DATEPART(month, '2017/08/25')
-
-The YEAR() function returns the year part for a specified date.
+#### Basamaklar:
+- DATEPART() Verilen bir tarihin belirtilen kısmını içeren bir Variant (Tamsayı) döndürür. SELECT DATEPART(month, '2017/08/25')
+- YEAR() Fonksiyon içinde belirtilen tarihin yıl bilgisini döndürür.
 
   
-#### Answer:
+#### Cevap:
 | ID | CUSTOMERNAME      | TCNUMBER    | GENDER | EMAIL                   | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP  |
 | -- | ----------------- | ----------- | ------ | ----------------------- | ---------- | ------ | ---------- | ------------ | ------------ | --------- |
 | 6  | Ahmet İNCİKAPI    | 6722155596  | E      | a_incikapi@miuul.com    | 28.05.1991 | 53     | 225        | (532)2414618 | (538)8459085 | 20-35 Age |
@@ -120,18 +125,17 @@ The YEAR() function returns the year part for a specified date.
 
 **4. Istanbul'da yaşayan kişileri Join kullanarak getiren sorguyu yazınız.**
 
-Solution:
+Çözüm -
 ````sql
 SELECT TOP 10 C.*,CT.CITIES FROM CUSTOMERS C
 INNER JOIN CITIES CT ON C.CITYID = CT.ID
 WHERE CT.CITIES ='İSTANBUL'
 ````
 
-#### Steps:
-The INNER JOIN keyword selects records that have matching values in both tables.
-
+#### Basamaklar:
+-INNER JOIN, iki ya da daha fazla tabloda ortak olan iki alandaki değerleri kontrol ederek tabloları birleştirir.
   
-#### Answer:
+#### Cevap:
 | ID  | CUSTOMERNAME          | TCNUMBER    | GENDER | EMAIL                  | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP  | CITIES   |
 | --- | --------------------- | ----------- | ------ | ---------------------- | ---------- | ------ | ---------- | ------------ | ------------ | --------- | -------- |
 | 15  | Yasin AĞAGÜL          | 32764684197 | E      | y_agagvl@miuul.com     | 19.10.1979 | 34     | 897        | (532)6102663 | (537)3381012 | 36-45 Age | İSTANBUL |
@@ -148,17 +152,15 @@ The INNER JOIN keyword selects records that have matching values in both tables.
 ***
 **5. Istanbul'da yaşayan kişileri subquery kullanarak getiren sorguyu yazınız.**
 
-Solution 1-
+Çözüm -
 ````sql
 SELECT TOP 10 * FROM CUSTOMERS
 WHERE CITYID = (SELECT ID FROM CITIES WHERE CITIES ='İSTANBUL')
 ````
-#### Steps:
-A subquery is a query that is nested inside a SELECT, INSERT, UPDATE, or DELETE statement, or inside another subquery.
+#### Basamaklar:
+-Subquery sorgu içerisinde sorgu demektir. İçteki alt sorgu problemin bir kısmının çözümünü verir, kalan kısmını ana sorgu halleder.
 
-
-  
-#### Answer:
+#### Çözüm:
 | ID  | CUSTOMERNAME          | TCNUMBER    | GENDER | EMAIL                  | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP  |
 | --- | --------------------- | ----------- | ------ | ---------------------- | ---------- | ------ | ---------- | ------------ | ------------ | --------- |
 | 15  | Yasin AĞAGÜL          | 32764684197 | E      | y_agagvl@miuul.com     | 19.10.1979 | 34     | 897        | (532)6102663 | (537)3381012 | 36-45 Age |
@@ -172,29 +174,30 @@ A subquery is a query that is nested inside a SELECT, INSERT, UPDATE, or DELETE 
 | 199 | Muhammed Emin TEKKAYA | 87271968026 | E      | m_emin@miuul.com       | 19.04.1984 | 34     | 897        | (542)2911632 | (535)9881318 | 36-45 Age |
 | 208 | Neslihan KILIÇÇEKER   | 53734331933 | K      | n_kilicceker@miuul.com | 4.10.1982  | 34     | 707        | (543)1432619 | (505)2287257 | 36-45 Age |
 |     |
+
 ***
+
 **6. Hangi Şehirde Kaç müşterimizin olduğu bilgisini getiren sorguyu yazınız.**
 
-Solution 1-
+Çözüm 1-
 ````sql
 SELECT CT.CITIES,COUNT(C.ID) AS CUSTOMERCOUNT FROM CUSTOMERS C
 INNER JOIN CITIES CT ON C.CITYID=CT.ID
 GROUP BY CT.CITIES
 ````
-Solution 2-
+Çözüm 2-
 ````sql
 SELECT *,
 (SELECT COUNT(*) FROM CUSTOMERS C WHERE CITYID=CITIES.ID) AS CUSTOMERCOUNTS 
 FROM CITIES
 ````
 
-#### Steps:
-The GROUP BY statement groups rows that have the same values into summary rows, like "find the number of customers in each country".
-
-The GROUP BY statement is often used with aggregate functions (COUNT(), MAX(), MIN(), SUM(), AVG()) to group the result-set by one or more columns.
+#### Basamaklar:
+- GROUP BY Adından da anlaşılacağı üzere GROUP BY ifadesi gruplama yapar. Yani sonuç kümesini bir veya birden fazla kolona göre gruplar. 
+The GROUP BY sonuç kümesini bir veya daha fazla sütuna göre gruplamak için bu toplama fonksiyonlarıyla birlikte kullanılır (COUNT(), MAX(), MIN(), SUM(), AVG()) 
 
   
-#### Answer:
+#### Cevap:
 | CITIES         | CUSTOMERCOUNT |
 | -------------- | ------------- |
 | ADANA          | 16            |
@@ -281,7 +284,7 @@ The GROUP BY statement is often used with aggregate functions (COUNT(), MAX(), M
 ***
 **7. 10'dan fazla müşterimiz olan şehirleri müşteri sayısı ile birlikte müşteri sayısına göre fazladan aza doğru sıralı şekilde getiriniz.**
 
-Solution 1-
+Çözüm 1-
 ````sql
 SELECT CT.CITIES, COUNT(C.ID) AS COUNTCUSTOMER FROM CUSTOMERS C
 INNER JOIN CITIES CT ON C.CITYID=CT.ID
@@ -289,7 +292,7 @@ GROUP BY CT.CITIES
 HAVING COUNT(C.ID)>10 
 ORDER BY COUNTCUSTOMER DESC
 ````
-Solution 2-
+Çözüm 2-
 ````sql
 SELECT CITIES, 
 (SELECT COUNT(CITYID)FROM CUSTOMERS C WHERE C.CITYID =CITIES.ID ) AS COUNTCUSTOMER
@@ -298,14 +301,14 @@ WHERE (SELECT COUNT(CITYID)FROM CUSTOMERS C WHERE C.CITYID =CITIES.ID )>10
 ORDER BY CUSTOMERCOUNT DESC
 ````
 
-#### Steps:
-The ORDER BY keyword is used to sort the result-set in ascending or descending order.
+#### Basamaklar:
+- ORDER BY anahtar sözcüğü, verileri artan ya da azalan düzende sıralamak için kullanılır.
 
-The HAVING clause was added to SQL because the WHERE keyword cannot be used with aggregate functions
+- HAVING 'where' komutu gruplama fonksiyonları ile kullanılmadığından aynı görevi yapan HAVING komutu GRUOP BY ile kullanılması için getirilmiştir.
  
 
   
-#### Answer:
+#### Cevap:
 | CITIES         | COUNTCUSTOMER |
 | -------------- | ------------- |
 | ŞIRNAK         | 110           |
@@ -349,8 +352,8 @@ The HAVING clause was added to SQL because the WHERE keyword cannot be used with
 ***
 **8. Hangi şehirde kaç erkek, kaç kadın müşterimiz olduğu bilgisini getiren sorguyu yazınız.**
 
+Çözüm -
 
-Solution 1-
 ````sql
 SELECT CT.CITIES,C.GENDER,COUNT(C.ID) AS CUSTOMERCOUNT FROM CUSTOMERS C
 INNER JOIN CITIES CT ON C.CITYID=CT.ID
@@ -359,7 +362,7 @@ ORDER BY CITIES ASC
 ````
 
   
-#### Answer:
+#### Cevap:
 | CITIES         | GENDER | CUSTOMERCOUNT |
 | -------------- | ------ | ------------- |
 | ADANA          | E      | 10            |
@@ -518,8 +521,8 @@ ORDER BY CITIES ASC
 
 **9. Hangi şehirde kaç erkek, kaç kadın müşterimizin olduğu bilgisini "erkeksayısı" ve "kadınsayısı" columnları yaratarak getiren sorguyu yazınız.**
 
+Çözüm -
 
-Solution 1-
 ````sql
 SELECT CITIES, 
 (SELECT COUNT(*)FROM CUSTOMERS  WHERE CITYID=CT.ID AND GENDER ='E') AS ERKEKSAYISI,
@@ -618,25 +621,22 @@ FROM CITIES CT
 
 **10.Customers tablosuna yaş grubu için yeni bir alan ekleyiniz.(Adı AGEGROUP veri tipi VARCHAR(50)).**
 
+Çözüm -
 
-Solution 1-
 ````sql
 ALTER TABLE CUSTOMERS ADD AGEGROUP VARCHAR(50)
 
 ````
 
-#### Steps:
-The ALTER TABLE statement is used to add, delete, or modify columns in an existing table.
-
-The ALTER TABLE statement is also used to add and drop various constraints on an existing table.
+#### Basamaklar:
+-ALTER TABLE bir tabloya sütun eklemek, mevcut sütunları silmek veya değiştirerek tablonun yapısını değiştirmek için kullanılır.
 
 ***
-
 
 **11.Customers tablosuna eklediğiniz AGEGROUP alanını 20-35 yaş arası, 36-45 yaş arası, 46-55 yaş arası, 55-65 yaş arası ve 65 yaş üstü olarak güncelleyiniz.**
 
 
-Solution 1-
+Çözüm 1-
 ````sql
 UPDATE CUSTOMERS 
 SET AGEGROUP =
@@ -649,7 +649,7 @@ WHEN (select YEAR(getdate()) - YEAR(CUSTOMERS.BIRTHDATE)) > 65 THEN '65 YAŞ ÜS
 END)	
 ````
 
-Solution 2-
+Çözüm 2-
 ````sql
 UPDATE CUSTOMERS 
 SET AGEGROUP =
@@ -663,17 +663,13 @@ END)
 ````
 
   
-#### Steps:
-The UPDATE statement is used to modify the existing records in a table.
+#### Basamakalar:
+- UPDATE  veritabanında bulunan verileri değiştirmek-güncellemek amacıyla kullanılan bir deyimdir.
 
-The CASE expression goes through conditions and returns a value when the first condition is met (like an if-then-else statement). So, once a condition is true, it will stop reading and return the result. If no conditions are true, it returns the value in the ELSE clause.
-
-The DATEDIFF() function returns the difference between two dates.
+- DATEDIFF() iki tarih arasında belirtilen zaman aralıklarını belirlemek için kullanabilirsiniz.
 
 
-
-
-#### Answer:
+#### Cevap:
 | ID | CUSTOMERNAME          | TCNUMBER    | GENDER | EMAIL                  | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP    |
 | -- | --------------------- | ----------- | ------ | ---------------------- | ---------- | ------ | ---------- | ------------ | ------------ | ----------- |
 | 1  | Sevda AKÇAN           | 42074151323 | K      | s_akcan@miuul.com      | 12.05.1964 | 22     | 202        | (542)5255514 | (532)3438190 | 55-65 YAŞ   |
@@ -693,7 +689,7 @@ The DATEDIFF() function returns the difference between two dates.
 **12.Customers tablosunda müşterinin yaşına göre hesaplanarak, hangi yaş aralığında kaç kişi olduğunu getiren sorguyu yazınız.**
 NOT:Bir önceki soruda oluşturduğumuz 'agegroup' alanını kullanmadan yazınız.
 
-Solution 1-
+Çözüm 1-
 ````sql
 SELECT COUNT(*) AS CUSTOMERCOUNT,
 CASE
@@ -715,7 +711,7 @@ END
 
 ````
 
-#### Answer:
+#### Cevap:
 | AGEGROUP  | CUSTOMERCOUNT |
 | --------- | ------------- |
 | 65 Over   | 266           |
@@ -725,7 +721,7 @@ END
 | 36-45 Age | 154           |
 
 
-Solution 2- 
+Çözüm 2- 
 
 ````sql
 SELECT AGEGROUP2,COUNT(TMT.ID) AS CUSTOMERCOUNT FROM 
@@ -741,14 +737,14 @@ FROM CUSTOMERS) TMT
 GROUP BY AGEGROUP2
 ORDER BY AGEGROUP2
 ````
-#### Steps:
-Group by yaparken tekrar case kullanmak kodu uzatabilir. Bu sebeple dynamic view yapabiliriz. Dinamik view bir sql sorgusunun bir yukarısına çıkıp orada sanki tablodan çekiyormuş gibi sorgu yazmaktır. 
+#### Basamaklar:
+- Group by yaparken tekrar case kullanmak kodu uzatabilir. Bu sebeple *dynamic view* yapabiliriz. Dinamik view bir sql sorgusunun bir yukarısına çıkıp orada sanki tablodan çekiyormuş gibi sorgu yazmaktır. 
 
 ***
  
  **13.İstanbul'da yaşayıp ilçesi "Kadıköy" dışında olanları listeleyiniz.**
  
-Solution 1-
+Çözüm 1-
 
 ````sql
  SELECT * FROM CUSTOMERS C
@@ -757,7 +753,7 @@ Solution 1-
  WHERE CT.CITIES = 'İSTANBUL' AND D.DISTRICT != 'KADIKÖY'
 ````
 
-Solution 2-
+Çözüm 2-
 Inner Join ile yazalım.
 ````sql
 SELECT TOP 10 C.*,CT.CITIES,D.DISTRICT FROM CUSTOMERS C
@@ -766,7 +762,7 @@ SELECT TOP 10 C.*,CT.CITIES,D.DISTRICT FROM CUSTOMERS C
  WHERE CT.CITIES='İSTANBUL' AND D.DISTRICT != 'KADIKÖY'
 ````
 
-#### Answer:
+#### Cevap:
 | ID  | CUSTOMERNAME          | TCNUMBER    | GENDER | EMAIL                  | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP    | CITIES   | DISTRICT     |
 | --- | --------------------- | ----------- | ------ | ---------------------- | ---------- | ------ | ---------- | ------------ | ------------ | ----------- | -------- | ------------ |
 | 15  | Yasin AĞAGÜL          | 32764684197 | E      | y_agagvl@miuul.com     | 19.10.1979 | 34     | 897        | (532)6102663 | (537)3381012 | 36-45 YAŞ   | İSTANBUL | SULTANBEYLİ  |
@@ -784,14 +780,14 @@ SELECT TOP 10 C.*,CT.CITIES,D.DISTRICT FROM CUSTOMERS C
 
 ***
 
-**14.  --Q15. Cities tablosundan "Ankara" kaydını sildiğimizi varsayalım. Bu durumda şehri "Ankara" olan müşterilerin şehir alanı boş gelecektir. Şehir alanı boş olan müşterileri listeleyen sorguyu yazınız.**
+**14.Cities tablosundan "Ankara" kaydını sildiğimizi varsayalım. Bu durumda şehri "Ankara" olan müşterilerin şehir alanı boş gelecektir. Şehir alanı boş olan müşterileri listeleyen sorguyu yazınız.**
 
 
 Önce 'Ankara'yı silelim.
 ````sql
 UPDATE CITIES SET CITIES = NULL WHERE ID= 6
 ````
-Solution -
+Çözüm -
 ````sql
  SELECT TOP 10 * FROM CUSTOMERS C
  WHERE C.CITYID  = ( SELECT CT.ID FROM CITIES CT WHERE CT.CITIES IS NULL)
@@ -803,13 +799,13 @@ INSERT INTO CITIES(ID,CITIES)
 VALUES(6,'ANKARA')
 SET IDENTITY_INSERT CITIES OFF -- ID için idendity_insert değerini kapattık.
 ````
-#### Steps:
-The INSERT INTO statement is used to insert new records in a table.
+#### Basamaklar:
+- INSERT INTO tabloya bir veya birden çok kayıt ekler. Bu ekleme sorgusu olarak adlandırılır.
 
-The only way to insert values into a field that is defined as an “IDENTITY” (or autonumber) field, is to set the IDENTITY_INSERT option to “ON” prior to inserting data into the table.
+ - IDENTITY_INSERT veritabanına veri girişi yaparken identity olan kolona veri girebilmemizi sağlar.
 
 
-#### Answer:
+#### Cevap:
 | ID  | CUSTOMERNAME              | TCNUMBER    | GENDER | EMAIL                | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP    |
 | --- | ------------------------- | ----------- | ------ | -------------------- | ---------- | ------ | ---------- | ------------ | ------------ | ----------- |
 | 112 | Aslı GÜNE                 | 63618747382 | K      | a_gvne@miuul.com     | 6.05.1994  | 6      | 157        | (505)6442992 | (532)8235020 | 20-35 YAŞ   |
@@ -828,7 +824,7 @@ The only way to insert values into a field that is defined as an “IDENTITY” 
 
 **15. Müşterilerimizin telefon numaralarının operatör bilgisini getirmek istiyoruz.(TELN1 ve TELNR2 alanlarının yanına operatör numarasını (532)(505) getirmek istiyoruz.) Bu sorgu için gereken SQL sorgusunu yazınız.**
 
-Solution -
+Çözüm -
 
 ````sql
  SELECT TOP 10 *,
@@ -837,13 +833,13 @@ Solution -
  FROM CUSTOMERS
 ````
 
-#### Steps:
-String verilerde istenilen karakter kadar verinin geri döndürülmesini sağlamak için SUBSTRING fonksiyonu kullanılır
+#### Basamaklar:
+- String verilerde istenilen karakter kadar verinin geri döndürülmesini sağlamak için SUBSTRING fonksiyonu kullanılır
 
-The LEFT() function extracts a number of characters from a string (starting from left).
+- The LEFT() fonksiyonu bir dizeden (soldan başlayarak) bir dizi karakter çıkarır.
 
 
-#### Answer:
+#### Cevap:
 | ID | CUSTOMERNAME          | TCNUMBER    | GENDER | EMAIL                  | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP    | OPERATOR1 | OPERATOR2 |
 | -- | --------------------- | ----------- | ------ | ---------------------- | ---------- | ------ | ---------- | ------------ | ------------ | ----------- | --------- | --------- |
 | 1  | Sevda AKÇAN           | 42074151323 | K      | s_akcan@miuul.com      | 12.05.1964 | 22     | 202        | (542)5255514 | (532)3438190 | 55-65 YAŞ   | 542       | 532       |
@@ -863,7 +859,7 @@ The LEFT() function extracts a number of characters from a string (starting from
 
 **16.Müşterilerimizin telefon numaralarının operatör bilgisini getirmek istiyoruz. Örneğin telefon numaraları "50"ya da "55"ile başlayan X, "54" ile başlayan Y, "53" ile başlayan Z operatörü olsun. Burada hangi operatörden ne kadar müşterimiz olduğunu bilgisini getirecek sorguyu yazınız.**
 
-Solution -
+Çözüm -
 
 ```sql
 SELECT SUM(TELNR1_X + TELNR2_X) AS OPERATOR_X,
@@ -897,7 +893,7 @@ END AS TELNR2_Z
 FROM CUSTOMERS) TT
 ```
 
-#### Answer:
+#### Cevap:
 | OPERATOR_X | OPERATOR_Y | OPERATOR_Z |
 | ---------- | ---------- | ---------- |
 | 461        | 478        | 963        |
@@ -907,7 +903,7 @@ FROM CUSTOMERS) TT
 
 **17.Her ilde en çok müşteriye sahip olduğumuz ilçeleri müşteri sayısına göre çoktan za doğru sıralı şekilde getiren sorguyu yazınız.**
 
-Solution -
+Çözüm -
 
 ````sql
 SELECT TOP 20 CT.CITIES,D.DISTRICT, COUNT(C.ID) AS CUSTOMERCOUNT FROM CUSTOMERS C
@@ -918,7 +914,7 @@ ORDER BY 1,3 DESC
 ````
  
 
-#### Answer:
+#### Cevap:
 | CITIES         | DISTRICT              | CUSTOMERCOUNT |
 | -------------- | --------------------- | ------------- |
 | ADANA          | SEYHAN                | 8             |
@@ -948,7 +944,7 @@ ORDER BY 1,3 DESC
 
 **18. Müşterilerin doğum günlerini türkçe haftanın günleri olarak getiren sorguyu yazınız.**
 
-Solution -
+Çözüm -
 
 ```sql
 SET LANGUAGE Turkish
@@ -957,14 +953,11 @@ DATENAME(DW,BIRTHDATE) AS BIRTHDAY
 FROM CUSTOMERS
 ```
 
-#### Steps:
-The DATENAME() function returns a specified part of a date.
-
-This function returns the result as a string value.
+#### Basamaklar:
+- DATENAME() başa yazılan parametrenin adını döner
 
 
-
-#### Answer:
+#### Cevap:
 | CUSTOMERNAME          | BIRTHDAY  |
 | --------------------- | --------- |
 | Sevda AKÇAN           | Salı      |
@@ -980,14 +973,12 @@ This function returns the result as a string value.
 |                       |
 
 
-
-
 ***
 
 
 **19. Müşterilerin doğum günlerinin bu yıl hangi güne denk geldiğini gösteren sorguyu yazınız.**
 
-Solution -
+Cevap -
 
 ```sql
 
@@ -1007,12 +998,10 @@ FROM
 (SELECT *, GETDATE() AS TODAYSDATE FROM CUSTOMERS) KMK)KMKK
 ```
 
-#### Steps:
- The DATEADD() function adds a time/date interval to a date and then returns the date.
+#### Basamaklar:
+- DATEADD() Belirtilen bir zaman aralığını tarihe eklemek veya tarihten çıkarmak için DateAdd işlevini kullanabilirsiniz.
 
-
-
-#### Answer:
+#### Cevap:
 | CUSTOMERNAME          | KACGUNGECTI | HANGIGUN  |
 | --------------------- | ----------- | --------- |
 | Sevda AKÇAN           | 21709       | Cumartesi |
@@ -1027,12 +1016,11 @@ FROM
 | Muhammed Ali ABDULLAH | 13314       | Perşembe  |
 |                       |
 
-
 ***
 
 **20.Doğum günü bugün olan müşterileri listeleyiniz.**
 
-Solution-
+Çözüm-
 
 ```sql
 SELECT * FROM CUSTOMERS
@@ -1040,12 +1028,10 @@ WHERE DATEPART(DAY,BIRTHDATE)=DATEPART(DAY,GETDATE()) AND DATEPART(MONTH,BIRTHDA
 ```
 
 
-#### Steps:
-The DATEPART() function returns a specified part of a date.
+#### Basamaklar:
+- DATEPART: Verilen tarih-saat parametresini parçalarına ayırıp istenilen parçayı almaya yarar
 
-This function returns the result as an integer value.
-
-#### Answer:
+#### Cevap:
 | ID  | CUSTOMERNAME      | TCNUMBER    | GENDER | EMAIL                | BIRTHDATE  | CITYID | DISTRICTID | TELNR1       | TELNR2       | AGEGROUP    |
 | --- | ----------------- | ----------- | ------ | -------------------- | ---------- | ------ | ---------- | ------------ | ------------ | ----------- |
 | 15  | Yasin AĞAGÜL      | 32764684197 | E      | y_agagvl@miuul.com   | 19.10.1979 | 34     | 897        | (532)6102663 | (537)3381012 | 36-45 YAŞ   |
