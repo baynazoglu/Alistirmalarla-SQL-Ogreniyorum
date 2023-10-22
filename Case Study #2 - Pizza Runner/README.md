@@ -1,6 +1,6 @@
-# 🍕 Case Study #2 Pizza Runner
+# 🍕 Case Study #2 HR ANALYTICS
 
-<img src="https://user-images.githubusercontent.com/81607668/127271856-3c0d5b4a-baab-472c-9e24-3c1e3c3359b2.png" alt="Image" width="500" height="520">
+<img src="https://netchex.com/wp-content/uploads/2022/12/HR-Analytics-768x512.png" alt="Image" width="500" height="420">
 
 ## 📚 Table of Contents
 - [Business Task](#business-task)
