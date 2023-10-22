@@ -119,54 +119,106 @@ This is how the clean `runner_orders_temp` table looks like and we will use this
 
 ***
 
-## Solution
+## Çözümler:
 
-## A. Pizza Metrics
 
-### 1. How many pizzas were ordered?
 
-````sql
-SELECT COUNT(*) AS pizza_order_count
-FROM customer_orders_temp;
-````
-
-**Answer:**
-
-![1*Ma9L4y6O_zhln6Wy7CdWMQ](https://user-images.githubusercontent.com/81607668/129473598-d6d55ab2-59c7-4040-97db-d1b0c1c5b294.png)
-
-- Total of 14 pizzas were ordered.
-
-### 2. How many unique customer orders were made?
+### 1. Şirketimizde hala çalışmaya devam eden çalışanların listesini getiren sorgu nedir? Not:İşten çıkış tarihi boş olanlar çalışmaya devam ediyor demektir.
 
 ````sql
-SELECT COUNT(DISTINCT order_id) AS unique_order_count
-FROM customer_orders_temp;
+SELECT TOP 10 * FROM PERSON
+WHERE OUTDATE IS NOT NULL
 ````
 
-**Answer:**
+**Cevap**
+| ID | CODE | TCNUMBER    | NAME_  | SURNAME         | GENDER | BIRTHDATE  | INDATE     | OUTDATE    | DEPARTMENTID | POSITIONID | PARENTPOSITIONID | MANAGERID | TELNR          | SALARY |
+| -- | ---- | ----------- | ------ | --------------- | ------ | ---------- | ---------- | ---------- | ------------ | ---------- | ---------------- | --------- | -------------- | ------ |
+| 2  | 2    | 74789296130 | Azat   | COŞKUNYÜREK     | E      | 7.05.1963  | 6.04.2019  | 14.03.2020 | 4            | 38         | 28               | NULL      | (0322) 2235724 | 5818   |
+| 3  | 3    | 86856513494 | Kemal  | TEKYİĞİT        | E      | 10.06.1959 | 20.01.2017 | 5.08.2018  | 7            | 41         | 31               | NULL      | (0322) 2338441 | 5805   |
+| 5  | 5    | 26046030220 | Ferhat | CINAR           | E      | 17.05.1953 | 19.10.2018 | 19.04.2020 | 8            | 42         | 32               | NULL      | (0322) 2339074 | 5550   |
+| 6  | 6    | 67221555969 | Tayfun | ŞENDİL          | E      | 8.10.1956  | 6.02.2015  | 12.07.2017 | 8            | 42         | 32               | NULL      | (0322) 2235363 | 5270   |
+| 7  | 7    | 43691911318 | Gülşen | ÇOLAK           | K      | 22.07.1956 | 26.07.2019 | 18.05.2020 | 5            | 39         | 29               | NULL      | (0322) 2339785 | 4930   |
+| 8  | 8    | 84870496920 | Deniz  | ERAVCI          | K      | 4.07.1977  | 25.07.2018 | 16.09.2019 | 8            | 42         | 32               | NULL      | (0322) 2231829 | 4915   |
+| 10 | 10   | 64660973116 | Burhan | TOROSLUOĞLU     | E      | 13.12.1957 | 21.10.2015 | 3.04.2019  | 2            | 36         | 26               | NULL      | (0322) 2232544 | 4975   |
+| 11 | 11   | 60820106615 | Meliha | ŞİRVANLI        | K      | 9.04.1976  | 1.07.2017  | 30.11.2018 | 2            | 36         | 26               | NULL      | (0322) 2232020 | 5393   |
+| 12 | 12   | 79689059342 | Engin  | HACIİBRAHİMOGLU | E      | 28.06.1965 | 14.03.2018 | 2.01.2019  | 3            | 37         | 27               | NULL      | (0322) 2232587 | 5149   |
+| 16 | 16   | 43712644333 | Zahide | CAYMAZ          | K      | 28.12.1995 | 22.03.2015 | 6.09.2019  | 7            | 41         | 31               | NULL      | (0322) 2234715 | 5863   |
+|    |
 
-![image](https://user-images.githubusercontent.com/81607668/129737993-710198bd-433d-469f-b5de-14e4022a3a45.png)
+***
 
-- There are 10 unique customer orders.
+### 2. Şirketteki departman bazlı halen çalışmaya devam eden KADIN ve ERKEK sayılarını getiren sorguyu yazınız.
 
-### 3. How many successful orders were delivered by each runner?
+Çözüm-
 
 ````sql
-SELECT 
-  runner_id, 
-  COUNT(order_id) AS successful_orders
-FROM #runner_orders
-WHERE distance != 0
-GROUP BY runner_id;
+SELECT D.DEPARTMENT,
+CASE
+	WHEN P.GENDER='E'THEN 'ERKEK'
+	ELSE 'KADIN'
+END AS GENDER,
+COUNT(P.ID) AS CUSTOMERCOUNT FROM PERSON P
+INNER JOIN DEPARTMENT D ON P.DEPARTMENTID = D.ID
+WHERE P.OUTDATE IS NOT NULL
+GROUP BY D.DEPARTMENT,P.GENDER
+ORDER BY DEPARTMENT,GENDER
 ````
 
-**Answer:**
+**Cevap**
+| DEPARTMENT          | GENDER | CUSTOMERCOUNT |
+| ------------------- | ------ | ------------- |
+| BİLGİ TEKNOLOJİLERİ | ERKEK  | 41            |
+| BİLGİ TEKNOLOJİLERİ | KADIN  | 36            |
+| FİNANS              | ERKEK  | 39            |
+| FİNANS              | KADIN  | 42            |
+| İLETİŞİM            | ERKEK  | 3             |
+| İLETİŞİM            | KADIN  | 7             |
+| İNSAN KAYNAKLARI    | ERKEK  | 35            |
+| İNSAN KAYNAKLARI    | KADIN  | 40            |
+| MUHASEBE            | ERKEK  | 39            |
+| MUHASEBE            | KADIN  | 38            |
+| PAZARLAMA           | ERKEK  | 32            |
+| PAZARLAMA           | KADIN  | 45            |
+| PLANLAMA            | ERKEK  | 37            |
+| PLANLAMA            | KADIN  | 31            |
+| SATINALMA           | ERKEK  | 38            |
+| SATINALMA           | KADIN  | 38            |
+| SATIŞ               | ERKEK  | 1             |
+| SATIŞ               | KADIN  | 3             |
+| YÖNETİM             | ERKEK  | 7             |
+| YÖNETİM             | KADIN  | 9             |
+|                     |
 
-![image](https://user-images.githubusercontent.com/81607668/129738112-6eada46a-8c32-495a-8e26-793b2fec89ef.png)
+***
 
-- Runner 1 has 4 successful delivered orders.
-- Runner 2 has 3 successful delivered orders.
-- Runner 3 has 1 successful delivered order.
+### 3. Şirketteki departman bazlı halen çalışmaya devam eden KADIN ve ERKEK sayılarını "MALE_PERSONCOUNT" ve "FEMALE_PERSONCOUNT" şeklinde iki column oluşturarak getiren sorguyu yazınız.
+
+Çözüm-
+
+````sql
+SELECT D.DEPARTMENT,
+(SELECT COUNT(*) FROM PERSON P WHERE P.GENDER ='E' AND P.DEPARTMENTID=D.ID AND P.OUTDATE IS NOT NULL) AS 'MALE_PERSONCOUNT',
+(SELECT COUNT(*) FROM PERSON P WHERE P.GENDER ='K' AND P.DEPARTMENTID=D.ID AND P.OUTDATE IS NOT NULL) AS 'FEMALE_PERSONCOUNT'
+FROM DEPARTMENT D
+ORDER BY 1
+````
+
+**Cevap**
+
+| BİLGİ TEKNOLOJİLERİ | 41 | 36 |
+| ------------------- | -- | -- |
+| FİNANS              | 39 | 42 |
+| İLETİŞİM            | 3  | 7  |
+| İNSAN KAYNAKLARI    | 35 | 40 |
+| MUHASEBE            | 39 | 38 |
+| PAZARLAMA           | 32 | 45 |
+| PLANLAMA            | 37 | 31 |
+| SATINALMA           | 38 | 38 |
+| SATIŞ               | 1  | 3  |
+| YÖNETİM             | 7  | 9  |
+|                     |
+
+***
 
 ### 4. How many of each type of pizza was delivered?
 
