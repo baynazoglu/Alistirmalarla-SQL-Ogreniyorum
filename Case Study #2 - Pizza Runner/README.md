@@ -220,50 +220,120 @@ ORDER BY 1
 
 ***
 
-### 4. How many of each type of pizza was delivered?
+### 4.Şirketimizin Planlama departmanına yeni bir şef ataması(--PLANLAMA ŞEFİ--) yapıldı ve maaşını belirlemek istiyoruz. Planlama departmanı için minimum,maximum ve ortalama şef maaşı getiren sorgu?
+--NOT:İşten Çıkanlar da dahil.
 
+--Çözüm 1 -
 ````sql
-SELECT 
-  p.pizza_name, 
-  COUNT(c.pizza_id) AS delivered_pizza_count
-FROM #customer_orders AS c
-JOIN #runner_orders AS r
-  ON c.order_id = r.order_id
-JOIN pizza_names AS p
-  ON c.pizza_id = p.pizza_id
-WHERE r.distance != 0
-GROUP BY p.pizza_name;
+SELECT PT.POSITION,COUNT(P.SALARY) [HOW MANY PEOPLE],AVG(P.SALARY)AS AVG_SALARY,MAX(P.SALARY) AS MAX_SALARY,MIN(P.SALARY) AS MIN_SALARY
+FROM PERSON P
+INNER JOIN POSITION PT ON P.POSITIONID=PT.ID
+WHERE PT.POSITION = 'PLANLAMA ŞEFİ'
+GROUP BY PT.POSITION
 ````
 
-**Answer:**
+--Çözüm 2 -
+-Subquery ile
+````sql
+SELECT PT.POSITION,
+(SELECT MIN(P.SALARY)FROM PERSON P WHERE POSITIONID=PT.ID) AS MIN_SALARY,
+(SELECT AVG(P.SALARY)FROM PERSON P WHERE POSITIONID=PT.ID)AS AVG_SALARY,
+(SELECT MAX(P.SALARY)FROM PERSON P WHERE POSITIONID=PT.ID) AS MAX_SALARY
+FROM POSITION PT
+WHERE POSITION ='PLANLAMA ŞEFİ'
+````
+**Basamaklar**
+-AVG():Sorguda belirtilen bir alanda yer alan bir değer kümesi aritmetik ortalamayı hesaplar
+-MIN () ve MAX () Fonksiyonu: MIN() işlevi, seçilen sütunun en küçük değeri çağırır. MAX() işlevi, seçilen sütunun en büyük değeri çağırır
 
-![image](https://user-images.githubusercontent.com/81607668/129738140-c9c002ff-5aed-48ab-bdfa-cadbd98973a9.png)
+**Çözüm**
 
-- There are 9 delivered Meatlovers pizzas and 3 Vegetarian pizzas.
+| POSITION      | MIN_SALARY | AVG_SALARY | MAX_SALARY |
+| ------------- | ---------- | ---------- | ---------- |
+| PLANLAMA ŞEFİ | 7926       | 9239       | 10427      |
+|               |
 
-### 5. How many Vegetarian and Meatlovers were ordered by each customer?**
+
+
+***
+
+
+### 5. Her bir pozisyonda mevcut çalışanlar olarak kaç kişi ve ortalama maaşları ne kadardır?**
+Çözüm 1- 
 
 ````sql
-SELECT 
-  c.customer_id, 
-  p.pizza_name, 
-  COUNT(p.pizza_name) AS order_count
-FROM #customer_orders AS c
-JOIN pizza_names AS p
-  ON c.pizza_id= p.pizza_id
-GROUP BY c.customer_id, p.pizza_name
-ORDER BY c.customer_id;
+SELECT PT.POSITION,COUNT(P.SALARY) [HOW MANY PEOPLE],ROUND(AVG(P.SALARY),0)AS AVG_SALARY,ROUND(MAX(P.SALARY),0) AS MAX_SALARY,ROUND(MIN(P.SALARY),0) AS MIN_SALARY
+FROM PERSON P
+RIGHT JOIN POSITION PT ON P.POSITIONID=PT.ID
+WHERE OUTDATE IS NOT NULL
+GROUP BY PT.POSITION
+ORDER BY PT.POSITION
 ````
 
-**Answer:**
+Çözüm 2- 
+--Subquery ile 
 
-![image](https://user-images.githubusercontent.com/81607668/129738167-269df165-1c9a-446a-b757-c7fc9a9021ed.png)
+````sql
+SELECT PT.POSITION,
+(SELECT COUNT(P.SALARY) FROM PERSON P WHERE P.POSITIONID= PT.ID AND OUTDATE IS NOT NULL) AS [HOW MANY PEOPLE],
+(SELECT AVG(P.SALARY) FROM PERSON P WHERE P.POSITIONID= PT.ID AND OUTDATE IS NOT NULL)AS AVG_SALARY,
+(SELECT MAX(P.SALARY) FROM PERSON P WHERE P.POSITIONID= PT.ID AND OUTDATE IS NOT NULL) AS MAX_SALARY,
+(SELECT MIN(P.SALARY) FROM PERSON P WHERE P.POSITIONID= PT.ID AND OUTDATE IS NOT NULL) AS MIN_SALARY
+FROM POSITION PT
+ORDER BY POSITION
+````
 
-- Customer 101 ordered 2 Meatlovers pizzas and 1 Vegetarian pizza.
-- Customer 102 ordered 2 Meatlovers pizzas and 2 Vegetarian pizzas.
-- Customer 103 ordered 3 Meatlovers pizzas and 1 Vegetarian pizza.
-- Customer 104 ordered 1 Meatlovers pizza.
-- Customer 105 ordered 1 Vegetarian pizza.
+**Basamak**
+
+-İki farklı çözümde iki farklı sonuç aldık. Çünkü inner joinle group by yaparken position isimlerine göre işlem yaptık. Fakat Subquery'de bi nevi positionid ye göre group by yapmış olduk.Satın alma şefi iki farklı ID'ye sahip olduğu için subqueryli çözümde 2 farklı satırda yer aldı. 
+
+
+**Cevap**
+
+| POSITION                        | HOW MANY PEOPLE | AVG_SALARY | MAX_SALARY | MIN_SALARY |
+| ------------------------------- | --------------- | ---------- | ---------- | ---------- |
+| BİLGİ TEKNOLOJİLERİ MEMURU      | 66              | 5108       | 5962       | 4005       |
+| BİLGİ TEKNOLOJİLERİ MÜDÜR YRD.  | 3               | 10769      | 11795      | 9941       |
+| BİLGİ TEKNOLOJİLERİ MÜDÜRÜ      | 3               | 16959      | 17634      | 15850      |
+| BİLGİ TEKNOLOJİLERİ ŞEFİ        | 3               | 10063      | 10635      | 9539       |
+| FİNANS MEMURU                   | 68              | 5039       | 5988       | 4001       |
+| FİNANS MÜDÜR YRD.               | 2               | 11439      | 11445      | 11432      |
+| FİNANS MÜDÜRÜ                   | 3               | 14751      | 17358      | 12013      |
+| FİNANS ŞEFİ                     | 4               | 9523       | 10151      | 8792       |
+| GENEL MÜDÜR                     | 2               | 20023      | 21645      | 18400      |
+| İDARİ MALİ İŞLERDEN SORUMLU GMY | 2               | 16652      | 18352      | 14951      |
+| İK'DAN SORUMLU GMY              | 3               | 18322      | 19568      | 17513      |
+| İLETİŞİM MEMURU                 | 70              | 5026       | 5958       | 4061       |
+| İLETİŞİM MÜDÜRÜ                 | 4               | 15381      | 17010      | 13385      |
+| İLETİŞİM ŞEFİ                   | 2               | 9522       | 9890       | 9154       |
+| İNSAN KAYNAKLARI MEMURU         | 72              | 5044       | 5994       | 4062       |
+| İNSAN KAYNAKLARI MÜDÜR YRD.     | 2               | 13861      | 14037      | 13685      |
+| İNSAN KAYNAKLARI MÜDÜRÜ         | 2               | 14305      | 14831      | 13779      |
+| İNSAN KAYNAKLARI ŞEFİ           | 1               | 8111       | 8111       | 8111       |
+| MUHASEBE MEMURU                 | 73              | 4928       | 5992       | 4024       |
+| MUHASEBE MÜDÜR YRD.             | 3               | 11614      | 13163      | 9601       |
+| MUHASEBE MÜDÜRÜ                 | 2               | 16649      | 16799      | 16498      |
+| MUHASEBE ŞEFİ                   | 3               | 8898       | 10153      | 7567       |
+| PAZARLAMA MEMURU                | 61              | 5027       | 5994       | 4092       |
+| PAZARLAMA MÜDÜR YRD.            | 3               | 11119      | 12571      | 9766       |
+| PAZARLAMA MÜDÜRÜ                | 1               | 12329      | 12329      | 12329      |
+| PAZARLAMA ŞEFİ                  | 3               | 9240       | 10529      | 8050       |
+| PLANLAMA MÜDÜR YRD.             | 2               | 12744      | 13661      | 11827      |
+| PLANLAMA MÜDÜRÜ                 | 3               | 15102      | 17794      | 12189      |
+| PLANLAMA ŞEFİ                   | 1               | 9030       | 9030       | 9030       |
+| SATINALMA MEMURU                | 68              | 5025       | 5985       | 4021       |
+| SATINALMA MÜDÜR YRD.            | 3               | 11716      | 12340      | 11197      |
+| SATINALMA MÜDÜRÜ                | 4               | 16410      | 17493      | 14222      |
+| SATINALMA ŞEFİ                  | 6               | 9701       | 10318      | 8862       |
+| SATIŞ MEMURU                    | 3               | 4471       | 4664       | 4310       |
+| SATIŞ MÜDÜR YRD.                | 3               | 12089      | 14001      | 10336      |
+| SATIŞ MÜDÜRÜ                    | 1               | 15646      | 15646      | 15646      |
+| SATIŞ ŞEFİ                      | 3               | 9234       | 10764      | 7600       |
+| TEKNİK GMY                      | 3               | 16929      | 18538      | 14115      |
+|                                 |
+
+***
+
 
 ### 6. What was the maximum number of pizzas delivered in a single order?
 
