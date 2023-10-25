@@ -253,6 +253,11 @@ ORDER BY 1
 
 ````
 
+**Basamak**
+
+- The SELECT DISTINCT statement is used to return only distinct (different) values.
+
+
 **Answer:**
 
 | YEAR_ | MALECOUNT_ | FEMALECOUNT_ |
@@ -264,36 +269,70 @@ ORDER BY 1
 | 2019  | 170        | 194          |
 |       |
 
+***
 
-### 7. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
+### 7. Her bir personelimizin ne kadar zamandır çalıştığı bilgisini şekildeki gibi ay olarak getiren sorguyu yazınız.
+
+--Çözüm 1-
 
 ````sql
-SELECT 
-  c.customer_id,
-  SUM(
-    CASE WHEN c.exclusions <> ' ' OR c.extras <> ' ' THEN 1
-    ELSE 0
-    END) AS at_least_1_change,
-  SUM(
-    CASE WHEN c.exclusions = ' ' AND c.extras = ' ' THEN 1 
-    ELSE 0
-    END) AS no_change
-FROM #customer_orders AS c
-JOIN #runner_orders AS r
-  ON c.order_id = r.order_id
-WHERE r.distance != 0
-GROUP BY c.customer_id
-ORDER BY c.customer_id;
+SELECT TOP 20 CONCAT(NAME_,' ',SURNAME) AS PERSON,INDATE,OUTDATE,
+CASE
+	WHEN OUTDATE IS NULL THEN ABS(DATEDIFF(MONTH,GETDATE(),INDATE))
+	ELSE ABS(DATEDIFF(MONTH,OUTDATE,INDATE))
+END AS WORKINGTIME FROM PERSON
 ````
 
+--Çözüm 2- 
+ --Union kullanarak
+````sql
+SELECT NAME_ +' ' +SURNAME AS PERSON,INDATE,OUTDATE,DATEDIFF(MONTH,INDATE,GETDATE()) AS WORKINGTIME
+FROM PERSON WHERE OUTDATE IS  NULL
+
+UNION ALL
+
+SELECT NAME_ +' ' +SURNAME AS PERSON,INDATE,OUTDATE,DATEDIFF(MONTH,INDATE,OUTDATE) AS WORKINGTIME
+FROM PERSON WHERE OUTDATE IS  NOT NULL
+
+````
+**Basamak**
+-CONCAT() function adds two or more strings together.
+UNION ALL command combines the result set of two or more SELECT statements (allows duplicate values).
+
+
+ 
 **Answer:**
 
-![image](https://user-images.githubusercontent.com/81607668/129738236-2c4383cb-9d42-458c-b9be-9963c336ee58.png)
+| PERSON                | INDATE     | OUTDATE    | WORKINGTIME |
+| --------------------- | ---------- | ---------- | ----------- |
+| Erdem İSTİK           | 28.07.2018 | NULL       | 63          |
+| Azat COŞKUNYÜREK      | 6.04.2019  | 14.03.2020 | 11          |
+| Kemal TEKYİĞİT        | 20.01.2017 | 5.08.2018  | 19          |
+| Bünyamin OKTAYOĞLU    | 29.03.2015 | NULL       | 103         |
+| Ferhat CINAR          | 19.10.2018 | 19.04.2020 | 18          |
+| Tayfun ŞENDİL         | 6.02.2015  | 12.07.2017 | 29          |
+| Gülşen ÇOLAK          | 26.07.2019 | 18.05.2020 | 10          |
+| Deniz ERAVCI          | 25.07.2018 | 16.09.2019 | 14          |
+| Anıl HİÇDURMAZ        | 13.06.2018 | NULL       | 64          |
+| Burhan TOROSLUOĞLU    | 21.10.2015 | 3.04.2019  | 42          |
+| Meliha ŞİRVANLI       | 1.07.2017  | 30.11.2018 | 16          |
+| Engin HACIİBRAHİMOGLU | 14.03.2018 | 2.01.2019  | 10          |
+| Çiğdem GÜLSU          | 13.07.2016 | NULL       | 87          |
+| Zerda KÜTÜKOĞLU       | 28.04.2019 | NULL       | 54          |
+| Münevver MUTAF        | 26.08.2016 | NULL       | 86          |
+| Zahide CAYMAZ         | 22.03.2015 | 6.09.2019  | 54          |
+| Nazar KAYNAKÇI        | 21.04.2016 | NULL       | 90          |
+| Naime SULTANOĞLU      | 13.04.2017 | NULL       | 78          |
+| Fırat BOZDAĞ          | 13.08.2019 | 31.01.2020 | 5           |
+| Fevzi DURAKLI         | 3.03.2016  | NULL       | 91          |
+|                       |
 
-- Customer 101 and 102 likes his/her pizzas per the original recipe.
-- Customer 103, 104 and 105 have their own preference for pizza topping and requested at least 1 change (extra or exclusion topping) on their pizza.
+***
 
-### 8. How many pizzas were delivered that had both exclusions and extras?
+### 8. 
+
+--Çözüm-
+
 
 ````sql
 SELECT  
