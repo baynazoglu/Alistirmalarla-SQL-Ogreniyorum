@@ -329,67 +329,110 @@ UNION ALL command combines the result set of two or more SELECT statements (allo
 
 ***
 
-### 8. 
+### 8.Şirketimiz 5.yılında, üstünde herkesin isminin ve soyisminin baş harflerinin bulunduğu bir ajanda bastırıp çalışanlarına hediye edecektir.Bunun için hangi harf kombinasyonundan en az ne kadar sayıda ajanda bastırılacağını getiren sorguyu yazınız.
+--Not: İki isimli olanların birinci isminin baş harfi kullanılacaktır.
+
 
 --Çözüm-
 
 
 ````sql
-SELECT  
-  SUM(
-    CASE WHEN exclusions IS NOT NULL AND extras IS NOT NULL THEN 1
-    ELSE 0
-    END) AS pizza_count_w_exclusions_extras
-FROM #customer_orders AS c
-JOIN #runner_orders AS r
-  ON c.order_id = r.order_id
-WHERE r.distance >= 1 
-  AND exclusions <> ' ' 
-  AND extras <> ' ';
+SELECT SUBSTRING(NAME_,1,1)+'.'+SUBSTRING(SURNAME,1,1) AS SHORTNAME, COUNT(*) AS PERSONCOUNT FROM PERSON
+GROUP BY SUBSTRING(NAME_,1,1)+'.'+SUBSTRING(SURNAME,1,1)
+ORDER BY 2 DESC
 ````
 
 **Answer:**
-
-![image](https://user-images.githubusercontent.com/81607668/129738278-dd3e7056-309d-42fc-a5e3-00f7b5d4609e.png)
-
-- Only 1 pizza delivered that had both extra and exclusion topping. That’s one fussy customer!
-
-### 9. What was the total volume of pizzas ordered for each hour of the day?
-
-````sql
-SELECT 
-  DATEPART(HOUR, [order_time]) AS hour_of_day, 
-  COUNT(order_id) AS pizza_count
-FROM #customer_orders
-GROUP BY DATEPART(HOUR, [order_time]);
-````
-
-**Answer:**
-
-![image](https://user-images.githubusercontent.com/81607668/129738302-573430e9-1785-4c71-adc1-464ffa94de8a.png)
-
-- Highest volume of pizza ordered is at 13 (1:00 pm), 18 (6:00 pm) and 21 (9:00 pm).
-- Lowest volume of pizza ordered is at 11 (11:00 am), 19 (7:00 pm) and 23 (11:00 pm).
-
-### 10. What was the volume of orders for each day of the week?
-
-````sql
-SELECT 
-  FORMAT(DATEADD(DAY, 2, order_time),'dddd') AS day_of_week, -- add 2 to adjust 1st day of the week as Monday
-  COUNT(order_id) AS total_pizzas_ordered
-FROM #customer_orders
-GROUP BY FORMAT(DATEADD(DAY, 2, order_time),'dddd');
-````
-
-**Answer:**
-
-![image](https://user-images.githubusercontent.com/81607668/129738331-233744f6-3b57-4f4f-9a51-f7a699a9eb2e.png)
-
-- There are 5 pizzas ordered on Friday and Monday.
-- There are 3 pizzas ordered on Saturday.
-- There is 1 pizza ordered on Sunday.
+	
+| SHORTNAME | PERSONCOUNT |
+| --------- | ----------- |
+| S.K       | 31          |
+| E.K       | 29          |
+| S.A       | 29          |
+| M.K       | 28          |
+| A.K       | 21          |
+| H.K       | 21          |
+| N.K       | 19          |
+| A.A       | 17          |
+| M.B       | 17          |
+| B.T       | 16          |
+| E.G       | 15          |
+| E.T       | 15          |
+| M.A       | 15          |
+| S.S       | 15          |
+| E.S       | 14          |
+| M.G       | 14          |
+| B.K       | 13          |
+| K.K       | 13          |
+| E.B       | 12          |
+| M.Ö       | 12          |
+|           |
 
 ***
+
+### 9.Maaş ortalaması 5500TL'den fazla olan departmanları listeleyen sorguyu yazınız.
+
+--Çözüm -
+
+````sql
+SELECT DEPARTMENT,AVG(SALARY) AS AVGSALARY FROM PERSON P
+INNER JOIN DEPARTMENT D ON P.DEPARTMENTID=D.ID
+GROUP BY DEPARTMENT
+HAVING AVG(SALARY)> 5500  
+ORDER BY 2 DESC
+````
+
+**Çözüm:**
+
+| DEPARTMENT          | AVGSALARY   |
+| ------------------- | ----------- |
+| YÖNETİM             | 14641.03125 |
+| SATIŞ               | 5970.568966 |
+| İLETİŞİM            | 5877.075    |
+| FİNANS              | 5557.24537  |
+| MUHASEBE            | 5546.486111 |
+| PLANLAMA            | 5516.773148 |
+| BİLGİ TEKNOLOJİLERİ | 5510.925926 |
+| PAZARLAMA           | 5508.37037  |
+|                     |
+
+***
+
+### 10.Departmanların ortalama kıdemini ay olarak hesaplayacak sorguyu yazınız.
+
+
+````sql
+SELECT DEPARTMENT,AVG(AVG_WORKINGTIME) AS AVG_WORKINGTIME 
+FROM 
+(SELECT DEPARTMENT,
+CASE
+	WHEN  OUTDATE IS NULL THEN  (DATEDIFF(MONTH,INDATE,GETDATE()))
+	ELSE (DATEDIFF(MONTH,INDATE,OUTDATE))
+END AS AVG_WORKINGTIME FROM PERSON P 
+INNER JOIN DEPARTMENT D ON P.DEPARTMENTID=D.ID ) KMK
+GROUP BY DEPARTMENT
+````
+
+**Answer:**
+
+| DEPARTMENT          | AVG_WORKINGTIME |
+| ------------------- | --------------- |
+| BİLGİ TEKNOLOJİLERİ | 55              |
+| MUHASEBE            | 53              |
+| SATIŞ               | 72              |
+| İNSAN KAYNAKLARI    | 54              |
+| PLANLAMA            | 56              |
+| PAZARLAMA           | 55              |
+| YÖNETİM             | 45              |
+| İLETİŞİM            | 70              |
+| FİNANS              | 51              |
+| SATINALMA           | 54              |
+|                     |
+
+***
+
+### 11.
+
 
 ## B. Runner and Customer Experience
 
