@@ -1,34 +1,37 @@
-# 💼 Case Study #2 HR ANALYTICS
+# 💼 Case Study #2: İnsan Kaynakları Analitiği
 
 <img src="https://netchex.com/wp-content/uploads/2022/12/HR-Analytics-768x512.png" alt="Image" width="500" height="420">
 
-## 📚 Table of Contents
-- [Business Task](#business-task)
-- [Entity Relationship Diagram](#entity-relationship-diagram)
-- [Questions and Solutions](#questions-and-solutions)
+## 📚 İçindekiler
+- [İş Görevi](#business-task)
+- [Varlık İlişki Diyagramı](#entity-relationship-diagram)
+- [Soru ve Çözüm](#question-and-solution)
   
-Please note that all the information regarding the case study has been sourced from the following link: [Here](https://www.udemy.com/course/alistirmalarla-sql-ogreniyorum/)
+Veriseti ve ilgili tüm bilgiler aşağıdaki bağlantıdan alınmıştır: [Alıştırmalarla SQL Öğreniyorum](https://www.udemy.com/course/alistirmalarla-sql-ogreniyorum/)
 
-
-I also published this on [Medium](https://medium.com/@fbaynazoglu)
-
-If you have any questions, reach out to me on [Linkedin](https://www.linkedin.com/in/baynazoglu/)
 ***
 
-## Business Task
-In this case we will be looking at human resources datas and we will be focusing on some queries that our manager wants from us.
+## İş Görevi
 
-## Entity Relationship Diagram
+Bu çalışmada İnsan Kaynaklarından alınmış bir veriseti üzerinde çalışmalar yapıyor olacağız.
+***
+
+## Varlık İlişki Diyagramı
 
 ![HR Analytics](https://github.com/baynazoglu/Alistirmalarla-SQL-Ogreniyorum/blob/c4e5739eaa4b272762ab3fbca2f8d62c7e169750/Case%20Study%20%232%20-%20Pizza%20Runner/ENTITY%20DIAGRAM%3DCASE2.jpg)
 
+ Bu çalışmayı ayrıca  Medium'da da yayınladım. [Medium](https://medium.com/@fbaynazoglu).
+
+Herhangi bir sorunuz varsa, bana bu adresten ulaşabilirsiniz. [LinkedIn](https://www.linkedin.com/in/baynazoglu/).
+***
 
 
-## Questions and Solutions
-
+## Soru ve Çözüm
 
 
 ### 1. Şirketimizde hala çalışmaya devam eden çalışanların listesini getiren sorgu nedir? Not:İşten çıkış tarihi boş olanlar çalışmaya devam ediyor demektir.
+
+--Çözüm -
 
 ````sql
 SELECT TOP 10 * FROM PERSON
@@ -54,7 +57,7 @@ WHERE OUTDATE IS NOT NULL
 
 ### 2. Şirketteki departman bazlı halen çalışmaya devam eden KADIN ve ERKEK sayılarını getiren sorguyu yazınız.
 
-Çözüm-
+--Çözüm -
 
 ````sql
 SELECT D.DEPARTMENT,
@@ -70,6 +73,7 @@ ORDER BY DEPARTMENT,GENDER
 ````
 
 **Cevap**
+
 | DEPARTMENT          | GENDER | CUSTOMERCOUNT |
 | ------------------- | ------ | ------------- |
 | BİLGİ TEKNOLOJİLERİ | ERKEK  | 41            |
@@ -98,7 +102,7 @@ ORDER BY DEPARTMENT,GENDER
 
 ### 3. Şirketteki departman bazlı halen çalışmaya devam eden KADIN ve ERKEK sayılarını "MALE_PERSONCOUNT" ve "FEMALE_PERSONCOUNT" şeklinde iki column oluşturarak getiren sorguyu yazınız.
 
-Çözüm-
+--Çözüm -
 
 ````sql
 SELECT D.DEPARTMENT,
@@ -148,6 +152,7 @@ FROM POSITION PT
 WHERE POSITION ='PLANLAMA ŞEFİ'
 ````
 **Basamaklar**
+
 -AVG():Sorguda belirtilen bir alanda yer alan bir değer kümesi aritmetik ortalamayı hesaplar
 -MIN () ve MAX () Fonksiyonu: MIN() işlevi, seçilen sütunun en küçük değeri çağırır. MAX() işlevi, seçilen sütunun en büyük değeri çağırır
 
@@ -164,7 +169,8 @@ WHERE POSITION ='PLANLAMA ŞEFİ'
 
 
 ### 5. Her bir pozisyonda mevcut çalışanlar olarak kaç kişi ve ortalama maaşları ne kadardır?**
-Çözüm 1- 
+
+--Çözüm 1 - 
 
 ````sql
 SELECT PT.POSITION,COUNT(P.SALARY) [HOW MANY PEOPLE],ROUND(AVG(P.SALARY),0)AS AVG_SALARY,ROUND(MAX(P.SALARY),0) AS MAX_SALARY,ROUND(MIN(P.SALARY),0) AS MIN_SALARY
@@ -242,6 +248,7 @@ ORDER BY POSITION
 
 ### 6.Yıllara göre işe alınan personel sayısını kadın ve erkek bazında listeleyen sorguyu yazınız
 
+--Çözüm - 
 ````sql
 SELECT  DISTINCT YEAR(P.INDATE) AS YEAR_,
 (SELECT COUNT(*) FROM PERSON WHERE GENDER='E' AND YEAR(INDATE)=YEAR(P.INDATE)) AS MALECOUNT_,
@@ -253,10 +260,11 @@ ORDER BY 1
 
 **Basamak**
 
-- The SELECT DISTINCT statement is used to return only distinct (different) values.
+- The SELECT DISTINCT  yalnızca farklı (distinct) değerleri döndürmek için kullanılır.
 
 
-**Answer:**
+
+**Cevap:**
 
 | YEAR_ | MALECOUNT_ | FEMALECOUNT_ |
 | ----- | ---------- | ------------ |
@@ -294,12 +302,12 @@ FROM PERSON WHERE OUTDATE IS  NOT NULL
 
 ````
 **Basamak**
--CONCAT() function adds two or more strings together.
-UNION ALL command combines the result set of two or more SELECT statements (allows duplicate values).
 
+-Concat() dize değerlerini birleştirmek için kullanılır
+-UNION ve UNION ALL ifadeleri, bir kümeyi diğerine eklemek için kullanılır, böylelikle iki veya daha fazla sorgunun sonuç kümeleri tek bir sonuç kümesi haline getirilebilir. 
 
  
-**Answer:**
+**Cevap:**
 
 | PERSON                | INDATE     | OUTDATE    | WORKINGTIME |
 | --------------------- | ---------- | ---------- | ----------- |
@@ -331,7 +339,7 @@ UNION ALL command combines the result set of two or more SELECT statements (allo
 --Not: İki isimli olanların birinci isminin baş harfi kullanılacaktır.
 
 
---Çözüm-
+--Çözüm -
 
 
 ````sql
@@ -340,7 +348,7 @@ GROUP BY SUBSTRING(NAME_,1,1)+'.'+SUBSTRING(SURNAME,1,1)
 ORDER BY 2 DESC
 ````
 
-**Answer:**
+**Cevap:**
 	
 | SHORTNAME | PERSONCOUNT |
 | --------- | ----------- |
@@ -398,7 +406,7 @@ ORDER BY 2 DESC
 
 ### 10.Departmanların ortalama kıdemini ay olarak hesaplayacak sorguyu yazınız.
 
---Solution
+--Çözüm -
 
 ````sql
 SELECT DEPARTMENT,AVG(AVG_WORKINGTIME) AS AVG_WORKINGTIME 
@@ -412,7 +420,7 @@ INNER JOIN DEPARTMENT D ON P.DEPARTMENTID=D.ID ) KMK
 GROUP BY DEPARTMENT
 ````
 
-**Answer:**
+**Cevap:**
 
 | DEPARTMENT          | AVG_WORKINGTIME |
 | ------------------- | --------------- |
@@ -432,7 +440,7 @@ GROUP BY DEPARTMENT
 
 ### 11.  Her personelin adını, pozisyonunu, bağlı olduğu birim yöneticisinin adını ve pozisyonunu getiren sorguyu yazınız.
 
---Solution 1.
+--Çözüm 1 -
 
 ````sql
 SELECT TOP 10
@@ -445,7 +453,7 @@ INNER JOIN POSITION POS ON POS.ID=P.POSITIONID
 INNER JOIN PERSON P2 ON P.MANAGERID=P2.ID
 INNER JOIN POSITION POS2 ON POS2.ID=P2.POSITIONID
 ````
---Solution 2.
+--Çözüm 2 -
 
 ````sql
 SELECT P.NAME_+' '+P.SURNAME AS PERSON, 
@@ -459,10 +467,11 @@ WHERE P.MANAGERID IS NOT NULL
 
 **Basamak**
 
--Multiple Inner Join from the same table:
-Wherever you have "INNER JOIN Metals AS m", m needs to be something unique (not m every time).
+-Aynı tablodan birden fazla Inner Join:
+Örneğin ilk inner join için kullandığımız "INNER JOIN Metals  m" ifadesindeki m değerini, diğer inner joinlerde değiştirmeliyiz.
 
-**Answer:**
+
+**Cevap:**
 
 | PERSON            | POSITION                   | MANAGERNAME      | MANAGERPOSITION          |
 | ----------------- | -------------------------- | ---------------- | ------------------------ |
