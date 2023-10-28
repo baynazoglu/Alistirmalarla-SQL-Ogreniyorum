@@ -28,14 +28,15 @@ In this case we will be looking at human resources datas and we will be focusing
 
 
 
-### 1. Şirketimizde hala çalışmaya devam eden çalışanların listesini getiren sorgu nedir? Not:İşten çıkış tarihi boş olanlar çalışmaya devam ediyor demektir.
+### 1.What is the query that returns the list of employees who are still working in our company? 
+Note: Employees that "OUTDATE" values are null means that they are still working.
 
 ````sql
 SELECT TOP 10 * FROM PERSON
 WHERE OUTDATE IS NOT NULL
 ````
 
-**Cevap**
+**Answer**
 | ID | CODE | TCNUMBER    | NAME_  | SURNAME         | GENDER | BIRTHDATE  | INDATE     | OUTDATE    | DEPARTMENTID | POSITIONID | PARENTPOSITIONID | MANAGERID | TELNR          | SALARY |
 | -- | ---- | ----------- | ------ | --------------- | ------ | ---------- | ---------- | ---------- | ------------ | ---------- | ---------------- | --------- | -------------- | ------ |
 | 2  | 2    | 74789296130 | Azat   | COŞKUNYÜREK     | E      | 7.05.1963  | 6.04.2019  | 14.03.2020 | 4            | 38         | 28               | NULL      | (0322) 2235724 | 5818   |
@@ -52,9 +53,9 @@ WHERE OUTDATE IS NOT NULL
 
 ***
 
-### 2. Şirketteki departman bazlı halen çalışmaya devam eden KADIN ve ERKEK sayılarını getiren sorguyu yazınız.
+ ### 2. Write the query that retrieves the number of WOMEN and MEN who are still working in the company based on departments.
 
-Çözüm-
+Solution-
 
 ````sql
 SELECT D.DEPARTMENT,
@@ -69,7 +70,8 @@ GROUP BY D.DEPARTMENT,P.GENDER
 ORDER BY DEPARTMENT,GENDER
 ````
 
-**Cevap**
+**Answer**
+
 | DEPARTMENT          | GENDER | CUSTOMERCOUNT |
 | ------------------- | ------ | ------------- |
 | BİLGİ TEKNOLOJİLERİ | ERKEK  | 41            |
@@ -96,9 +98,9 @@ ORDER BY DEPARTMENT,GENDER
 
 ***
 
-### 3. Şirketteki departman bazlı halen çalışmaya devam eden KADIN ve ERKEK sayılarını "MALE_PERSONCOUNT" ve "FEMALE_PERSONCOUNT" şeklinde iki column oluşturarak getiren sorguyu yazınız.
+### 3. Write the query that retrieves the number of WOMEN and MEN who are still working in the company based on departments by creating two columns as "MALE_PERSONCOUNT" and "FEMALE_PERSONCOUNT".
 
-Çözüm-
+Solution-
 
 ````sql
 SELECT D.DEPARTMENT,
@@ -108,7 +110,7 @@ FROM DEPARTMENT D
 ORDER BY 1
 ````
 
-**Cevap**
+**Answer**
 
 | BİLGİ TEKNOLOJİLERİ | 41 | 36 |
 | ------------------- | -- | -- |
@@ -125,10 +127,10 @@ ORDER BY 1
 
 ***
 
-### 4.Şirketimizin Planlama departmanına yeni bir şef ataması(--PLANLAMA ŞEFİ--) yapıldı ve maaşını belirlemek istiyoruz. Planlama departmanı için minimum,maximum ve ortalama şef maaşı getiren sorgu?
---NOT:İşten Çıkanlar da dahil.
+### A new chief (--PLANNING CHIEF--) has been hired in the Planning department of our company and we want to determine his salary. Write a query that brings minimum, maximum and average chief salary for the planning department.
+--NOTE: Including those who quit their job.
 
---Çözüm 1 -
+--Solution 1 -
 ````sql
 SELECT PT.POSITION,COUNT(P.SALARY) [HOW MANY PEOPLE],AVG(P.SALARY)AS AVG_SALARY,MAX(P.SALARY) AS MAX_SALARY,MIN(P.SALARY) AS MIN_SALARY
 FROM PERSON P
@@ -137,8 +139,9 @@ WHERE PT.POSITION = 'PLANLAMA ŞEFİ'
 GROUP BY PT.POSITION
 ````
 
---Çözüm 2 -
--Subquery ile
+--Solution 2 -
+-Using Subquery 
+
 ````sql
 SELECT PT.POSITION,
 (SELECT MIN(P.SALARY)FROM PERSON P WHERE POSITIONID=PT.ID) AS MIN_SALARY,
@@ -147,11 +150,12 @@ SELECT PT.POSITION,
 FROM POSITION PT
 WHERE POSITION ='PLANLAMA ŞEFİ'
 ````
-**Basamaklar**
--AVG():Sorguda belirtilen bir alanda yer alan bir değer kümesi aritmetik ortalamayı hesaplar
--MIN () ve MAX () Fonksiyonu: MIN() işlevi, seçilen sütunun en küçük değeri çağırır. MAX() işlevi, seçilen sütunun en büyük değeri çağırır
 
-**Çözüm**
+**Steps**
+-AVG () computes the average of a set of values by dividing the sum of those values by the count of nonnull values
+-The MIN() function returns the smallest value of the selected column. The MAX() function returns the largest value of the selected column.
+
+**Answer**
 
 | POSITION      | MIN_SALARY | AVG_SALARY | MAX_SALARY |
 | ------------- | ---------- | ---------- | ---------- |
@@ -163,8 +167,9 @@ WHERE POSITION ='PLANLAMA ŞEFİ'
 ***
 
 
-### 5. Her bir pozisyonda mevcut çalışanlar olarak kaç kişi ve ortalama maaşları ne kadardır?**
-Çözüm 1- 
+### 5. How many current employees are there in each position and what is their average salary?
+
+--Solution 1- 
 
 ````sql
 SELECT PT.POSITION,COUNT(P.SALARY) [HOW MANY PEOPLE],ROUND(AVG(P.SALARY),0)AS AVG_SALARY,ROUND(MAX(P.SALARY),0) AS MAX_SALARY,ROUND(MIN(P.SALARY),0) AS MIN_SALARY
@@ -175,8 +180,8 @@ GROUP BY PT.POSITION
 ORDER BY PT.POSITION
 ````
 
-Çözüm 2- 
---Subquery ile 
+--Solution 2- 
+--With Subquery  
 
 ````sql
 SELECT PT.POSITION,
@@ -190,10 +195,10 @@ ORDER BY POSITION
 
 **Basamak**
 
--İki farklı çözümde iki farklı sonuç aldık. Çünkü inner joinle group by yaparken position isimlerine göre işlem yaptık. Fakat Subquery'de bi nevi positionid ye göre group by yapmış olduk.Satın alma şefi iki farklı ID'ye sahip olduğu için subqueryli çözümde 2 farklı satırda yer aldı. 
+--We got 2 different results in two different solutions. Because when we made group by with inner join, we did the process according to the "position" column. But in Subquery method, we did group by according to "positionid". Since the purchasing chief had two different IDs, he was in 2 different rows in the solution with subquery.
 
 
-**Cevap**
+**Answer**
 
 | POSITION                        | HOW MANY PEOPLE | AVG_SALARY | MAX_SALARY | MIN_SALARY |
 | ------------------------------- | --------------- | ---------- | ---------- | ---------- |
@@ -240,7 +245,9 @@ ORDER BY POSITION
 ***
 
 
-### 6.Yıllara göre işe alınan personel sayısını kadın ve erkek bazında listeleyen sorguyu yazınız
+### 6.Write the query that lists the number of personnel hired by years based on men and women.
+
+--Solution-
 
 ````sql
 SELECT  DISTINCT YEAR(P.INDATE) AS YEAR_,
@@ -251,7 +258,7 @@ ORDER BY 1
 
 ````
 
-**Basamak**
+**Steps**
 
 - The SELECT DISTINCT statement is used to return only distinct (different) values.
 
@@ -269,9 +276,9 @@ ORDER BY 1
 
 ***
 
-### 7. Her bir personelimizin ne kadar zamandır çalıştığı bilgisini şekildeki gibi ay olarak getiren sorguyu yazınız.
+### 7. Write the query that returns the information about how long each employee has been working in months.
 
---Çözüm 1-
+--Solution 1-
 
 ````sql
 SELECT TOP 20 CONCAT(NAME_,' ',SURNAME) AS PERSON,INDATE,OUTDATE,
@@ -281,8 +288,9 @@ CASE
 END AS WORKINGTIME FROM PERSON
 ````
 
---Çözüm 2- 
- --Union kullanarak
+--Solution 2- 
+ --Using Union 
+ 
 ````sql
 SELECT NAME_ +' ' +SURNAME AS PERSON,INDATE,OUTDATE,DATEDIFF(MONTH,INDATE,GETDATE()) AS WORKINGTIME
 FROM PERSON WHERE OUTDATE IS  NULL
@@ -293,9 +301,9 @@ SELECT NAME_ +' ' +SURNAME AS PERSON,INDATE,OUTDATE,DATEDIFF(MONTH,INDATE,OUTDAT
 FROM PERSON WHERE OUTDATE IS  NOT NULL
 
 ````
-**Basamak**
+**Steps**
 -CONCAT() function adds two or more strings together.
-UNION ALL command combines the result set of two or more SELECT statements (allows duplicate values).
+-UNION ALL command combines the result set of two or more SELECT statements (allows duplicate values).
 
 
  
@@ -327,11 +335,11 @@ UNION ALL command combines the result set of two or more SELECT statements (allo
 
 ***
 
-### 8.Şirketimiz 5.yılında, üstünde herkesin isminin ve soyisminin baş harflerinin bulunduğu bir ajanda bastırıp çalışanlarına hediye edecektir.Bunun için hangi harf kombinasyonundan en az ne kadar sayıda ajanda bastırılacağını getiren sorguyu yazınız.
---Not: İki isimli olanların birinci isminin baş harfi kullanılacaktır.
+### 8.In its 5th year, our company will give an agenda with the initials of everyone's name and surname as a gift to its employees. For this, write the query that brings at least how many agendas will be printed from which letter combination.
+--Note: For those with two names, the initials of the first name will be used.
 
 
---Çözüm-
+--Solution-
 
 
 ````sql
@@ -368,9 +376,9 @@ ORDER BY 2 DESC
 
 ***
 
-### 9.Maaş ortalaması 5500TL'den fazla olan departmanları listeleyen sorguyu yazınız.
+### 9. Write the query that lists the departments with average salary more than 5500TL.
 
---Çözüm -
+--Solution -
 
 ````sql
 SELECT DEPARTMENT,AVG(SALARY) AS AVGSALARY FROM PERSON P
@@ -380,7 +388,7 @@ HAVING AVG(SALARY)> 5500
 ORDER BY 2 DESC
 ````
 
-**Çözüm:**
+**Answer:**
 
 | DEPARTMENT          | AVGSALARY   |
 | ------------------- | ----------- |
@@ -396,9 +404,9 @@ ORDER BY 2 DESC
 
 ***
 
-### 10.Departmanların ortalama kıdemini ay olarak hesaplayacak sorguyu yazınız.
+### 10.Write the query to calculate the average experience of the departments in months.
 
---Solution
+--Solution -
 
 ````sql
 SELECT DEPARTMENT,AVG(AVG_WORKINGTIME) AS AVG_WORKINGTIME 
@@ -430,9 +438,9 @@ GROUP BY DEPARTMENT
 
 ***
 
-### 11.  Her personelin adını, pozisyonunu, bağlı olduğu birim yöneticisinin adını ve pozisyonunu getiren sorguyu yazınız.
+### 11. Write a query that retrieves the name, position of the each member and their manager names and the positions of the managers.
 
---Solution 1.
+--Solution 1 -
 
 ````sql
 SELECT TOP 10
@@ -457,7 +465,7 @@ INNER JOIN POSITION POS ON POS.ID=P.POSITIONID
 WHERE P.MANAGERID IS NOT NULL
 ````
 
-**Basamak**
+**Steps**
 
 -Multiple Inner Join from the same table:
 Wherever you have "INNER JOIN Metals AS m", m needs to be something unique (not m every time).
