@@ -6,7 +6,7 @@
 - [Varlık İlişki Diyagramı](#entity-relationship-diagram)
 - [Soru ve Çözüm](#question-and-solution)
 
-Veriseti ve ilgili tüm bilgilerin aşağıdaki bağlantıdan alınmıştır:
+Veriseti ve ilgili tüm bilgiler aşağıdaki bağlantıdan alınmıştır:
 [Alıştırmalarla SQL Öğreniyorum.](https://www.udemy.com/course/alistirmalarla-sql-ogreniyorum/). 
 
 ***
