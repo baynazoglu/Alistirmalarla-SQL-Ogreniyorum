@@ -1,5 +1,5 @@
 # 💸 Case Study #1: Customer Database
-<img src="https://www.xero.com/blog/wp-content/uploads/2020/07/164402-Xero-blog-header-01_800x480_acf_cropped.png" alt="Image" width="400" height="400">
+<img src="https://github.com/baynazoglu/Alistirmalarla-SQL-Ogreniyorum/blob/main/Case%20Study%20%231%20-%20M%C3%BC%C5%9Fteri%20Veritaban%C4%B1/customer%20database.png" alt="Image" width="450" height="400">
 
 ## 📚 Table of Contents
 - [Business Task](#business-task)
