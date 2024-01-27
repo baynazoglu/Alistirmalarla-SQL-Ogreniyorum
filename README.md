@@ -1,6 +1,6 @@
 # 🥑 Case Study #3: Foodie-Fi
 
-<img src="https://user-images.githubusercontent.com/81607668/129742132-8e13c136-adf2-49c4-9866-dec6be0d30f0.png" width="500" height="520" alt="image">
+<img src="https://github.com/baynazoglu/Alistirmalarla-SQL-Ogreniyorum/blob/main/Case%20Study%20%231%20-%20M%C3%BC%C5%9Fteri%20Veritaban%C4%B1/customer%20database.png" width="500" height="450" alt="image">
 
 ## 📚 Table of Contents
 - [Business Task](#business-task)
